@@ -1,1 +1,1 @@
-This is the module hosting the Gradle plugin code
+This module hosts the Gradle plugin code.

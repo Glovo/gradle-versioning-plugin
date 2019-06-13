@@ -1,0 +1,1 @@
+This module hosts the code for a demo Android app using `gradle-mobile-release-plugin`. 
