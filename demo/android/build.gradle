@@ -6,6 +6,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.4.1'
+        classpath 'com.glovo:gradle-mobile-release-plugin:local'
     }
 }
 
@@ -15,6 +16,7 @@ repositories {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'com.glovo.mobile-release'
 
 android {
     compileSdkVersion 28
