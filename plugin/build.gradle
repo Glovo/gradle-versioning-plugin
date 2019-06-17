@@ -1,3 +1,9 @@
+repositories {
+	google()
+	mavenCentral()
+	jcenter()
+}
+
 apply plugin: 'groovy'
 
 dependencies {
