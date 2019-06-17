@@ -13,6 +13,7 @@ out/
 .idea/misc.xml
 .idea/modules
 .idea/modules.xml
+.idea/runConfigurations.xml
 .idea/vcs.xml
 .idea/**/libraries
 .idea/**/gradle.xml
