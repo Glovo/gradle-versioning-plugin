@@ -1,9 +1,9 @@
-rootProject.name = "android-demo"
+rootProject.name = "android-demos"
 
-include(":app")
+include(":app-kts")
 
 includeBuild("../../") {
     dependencySubstitution {
-        substitute(module("com.glovo:gradle-mobile-release-plugin")).with(project(":plugin"))
+        substitute(module("com.glovo.mobile-release:gradle-plugin")).with(project(":plugin"))
     }
 }
