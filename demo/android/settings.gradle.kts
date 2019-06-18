@@ -1,6 +1,6 @@
 rootProject.name = "android-demos"
 
-include(":app-kts")
+include(":app-kts", ":app")
 
 includeBuild("../../") {
     dependencySubstitution {
