@@ -1,12 +1,11 @@
-package com.glovo.mobile.release
+package com.glovo.mobile.release.internal
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-class MobileReleasePlugin implements Plugin<Project> {
-
+class BaseMobileReleasePlugin implements Plugin<Project> {
     @Override
-    void apply(Project target) {
+    void apply(Project project) {
         println("Applied ${this.class.canonicalName}")
     }
 }
