@@ -2,7 +2,13 @@ plugins {
     id("com.android.application")
 }
 
-apply(plugin = "com.glovo.mobile-release")
+buildscript {
+    dependencies {
+        classpath("com.glovo.mobile-release:gradle-plugin-kts:local")
+    }
+}
+
+apply(plugin = "com.glovo.mobile-release-kts")
 
 android {
     compileSdkVersion(28)
