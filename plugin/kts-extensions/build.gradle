@@ -1,0 +1,24 @@
+buildscript {
+    ext.versions = [
+            kotlin: '1.3.31'
+    ]
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        //noinspection DifferentKotlinGradleVersion
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'kotlin'
+
+dependencies {
+    implementation gradleApi()
+    implementation project(':plugin:core')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin"
+}
