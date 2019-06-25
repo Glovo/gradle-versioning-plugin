@@ -1,11 +1,11 @@
 package com.glovo.mobile.release.internal
 
-class LazyProperties {
+class PropertiesFile {
 
     private final File file
     private final Closure<Properties> propertiesProvider
 
-    LazyProperties(File file) {
+    PropertiesFile(File file) {
         this.file = file
         this.propertiesProvider = {
             if (!file.exists()) {
@@ -35,5 +35,9 @@ class LazyProperties {
         def stream = file.newOutputStream()
         properties.store(stream, '')
         stream.close()
+    }
+
+    boolean contains(String key) {
+        return properties[key] != null
     }
 }

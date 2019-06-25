@@ -8,7 +8,7 @@ import org.junit.rules.TemporaryFolder
 import static com.google.common.truth.Truth.assertThat
 import static org.junit.Assert.fail
 
-class LazyPropertiesTest {
+class PropertiesFileTest {
 
     @Rule
     public TemporaryFolder temp = new TemporaryFolder()
@@ -17,14 +17,14 @@ class LazyPropertiesTest {
     void doesNotThrowEagerlyWhenFileNotFound() {
         File file = new File(temp.root.path, 'notThere.properties')
 
-        new LazyProperties(file)
+        new PropertiesFile(file)
     }
 
     @Test
     void throwsWhenFileNotFoundAsSoonPropertiesAccessed() {
         File file = new File(temp.root.path, 'notThere.properties')
 
-        def properties = new LazyProperties(file)
+        def properties = new PropertiesFile(file)
 
         try {
             properties['foo']
@@ -39,7 +39,7 @@ class LazyPropertiesTest {
     void returnsValueForSpecifiedKey() {
         def file = newPropertiesFile('one=1')
 
-        def properties = new LazyProperties(file)
+        def properties = new PropertiesFile(file)
 
         assertThat(properties['one']).isEqualTo('1')
     }
@@ -47,7 +47,7 @@ class LazyPropertiesTest {
     @Test
     void updatesValueForSpecifiedKey() {
         def file = newPropertiesFile('one=1')
-        def properties = new LazyProperties(file)
+        def properties = new PropertiesFile(file)
 
         properties.put('one', 'uno')
 
@@ -57,7 +57,7 @@ class LazyPropertiesTest {
     @Test
     void persistsUpdatedValueForSpecifiedKey() {
         def file = newPropertiesFile('one=1')
-        def properties = new LazyProperties(file)
+        def properties = new PropertiesFile(file)
 
         properties.put('one', 'uno')
 
