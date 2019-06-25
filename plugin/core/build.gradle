@@ -8,6 +8,7 @@ apply plugin: 'groovy'
 
 dependencies {
 	implementation gradleApi()
+	compileOnly 'com.android.tools.build:gradle:3.4.1'
 
 	testImplementation 'junit:junit:4.12'
 	testImplementation 'com.google.truth:truth:0.45'
