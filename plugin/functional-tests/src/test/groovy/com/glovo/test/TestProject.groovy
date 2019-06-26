@@ -1,5 +1,6 @@
 package com.glovo.test
 
+
 import com.google.common.io.Resources
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
@@ -9,6 +10,7 @@ class TestProject {
     private static final File ROOT_DIR = findRoot(new File(Resources.getResource('.').file))
 
     final File projectDir
+    private final File appBuildScript
 
     static TestProject groovy(String name) {
         return create(name, BuildScriptTemplate.GROOVY)
@@ -19,22 +21,25 @@ class TestProject {
     }
 
     private static TestProject create(String name, BuildScriptTemplate template) {
-        def project = new TestProject(name)
-        project.createSettingsScript()
-        project.createRootBuildScript()
-        project.createAppBuildScript(template)
-        project.createAppManifest()
+        def projectDir = createProjectDir(name)
+        createSettingsScript(projectDir)
+        createRootBuildScript(projectDir)
+        createAppManifest(projectDir)
+        def appBuild = createAppBuildScript(projectDir, template)
+
+        def project = new TestProject(projectDir, appBuild)
         return project
     }
 
-    TestProject(String name) {
-        this.projectDir = new File(ROOT_DIR, "build/test-projects/$name")
-        this.projectDir.deleteDir()
-        this.projectDir.mkdirs()
+    private static File createProjectDir(String name) {
+        def projectDir = new File(ROOT_DIR, "build/test-projects/$name")
+        projectDir.deleteDir()
+        projectDir.mkdirs()
         println("Created project dir at: $projectDir")
+        return projectDir
     }
 
-    private void createSettingsScript() {
+    private static File createSettingsScript(File projectDir) {
         def settings = new File(projectDir, 'settings.gradle.kts')
         settings.text = """\
             include(":app")
@@ -46,9 +51,11 @@ class TestProject {
                 }
             }
             """.stripIndent()
+        println("Created settings script at $settings.path")
+        return settings
     }
 
-    private void createRootBuildScript() {
+    private static File createRootBuildScript(File projectDir) {
         def build = new File(projectDir, 'build.gradle.kts')
         build.text = """\
             buildscript {
@@ -71,9 +78,10 @@ class TestProject {
                 }
             }
             """.stripIndent()
+        return build
     }
 
-    private void createAppManifest() {
+    private static File createAppManifest(File projectDir) {
         def manifest = new File(projectDir, 'app/src/main/AndroidManifest.xml')
         manifest.parentFile.mkdirs()
         manifest.text = """\
@@ -83,13 +91,20 @@ class TestProject {
                 <application />
             </manifest>
             """.stripIndent()
+        return manifest
     }
 
-    private void createAppBuildScript(BuildScriptTemplate template) {
+    private static File createAppBuildScript(File projectDir, BuildScriptTemplate template) {
         def build = new File(projectDir, "app/$template.fileName")
         build.parentFile.mkdirs()
         build.text = template.content.stripIndent()
         build.text = build.text.stripIndent()
+        return build
+    }
+
+    TestProject(File projectDir, File appBuildScript) {
+        this.projectDir = projectDir
+        this.appBuildScript = appBuildScript
     }
 
     BuildResult build(String... args) {
