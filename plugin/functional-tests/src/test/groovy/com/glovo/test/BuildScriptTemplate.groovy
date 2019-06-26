@@ -1,13 +1,13 @@
 package com.glovo.test
 
-enum Template {
+enum BuildScriptTemplate {
     GROOVY('build.gradle', GROOVY_CONTENT),
     KOTLIN('build.gradle.kts', KOTLIN_CONTENT)
 
     final String fileName
     final String content
 
-    Template(String fileName, String content) {
+    BuildScriptTemplate(String fileName, String content) {
         this.fileName = fileName
         this.content = content
     }
