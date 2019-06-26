@@ -2,6 +2,9 @@ package com.glovo.test
 
 import com.google.common.io.Resources
 import org.gradle.api.Action
+import org.gradle.testkit.runner.BuildResult
+import org.gradle.testkit.runner.GradleRunner
+import org.junit.runner.Result
 
 class TestProject {
 
@@ -83,6 +86,15 @@ class TestProject {
             </manifest>
             """.stripIndent()
     }
+
+    BuildResult build(String... args) {
+        return GradleRunner.create()
+                .withProjectDir(projectDir)
+                .withArguments(args)
+                .forwardOutput()
+                .build()
+    }
+
 
     private void createAppBuildScript(BuildScriptTemplate template, Action<File> config = {}) {
         def build = new File(projectDir, "app/$template.fileName")
