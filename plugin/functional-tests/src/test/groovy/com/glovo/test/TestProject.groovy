@@ -1,10 +1,8 @@
 package com.glovo.test
 
 import com.google.common.io.Resources
-import org.gradle.api.Action
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
-import org.junit.runner.Result
 
 class TestProject {
 
@@ -12,19 +10,19 @@ class TestProject {
 
     final File projectDir
 
-    static TestProject groovy(String name, Action<File> buildScriptConfig = {}) {
-        return create(name, BuildScriptTemplate.GROOVY, buildScriptConfig)
+    static TestProject groovy(String name) {
+        return create(name, BuildScriptTemplate.GROOVY)
     }
 
-    static TestProject kotlin(String name, Action<File> buildScriptConfig = {}) {
-        return create(name, BuildScriptTemplate.KOTLIN, buildScriptConfig)
+    static TestProject kotlin(String name) {
+        return create(name, BuildScriptTemplate.KOTLIN)
     }
 
-    private static TestProject create(String name, BuildScriptTemplate template, Action<File> buildScriptConfig) {
+    private static TestProject create(String name, BuildScriptTemplate template) {
         def project = new TestProject(name)
         project.createSettingsScript()
         project.createRootBuildScript()
-        project.createAppBuildScript(template, buildScriptConfig)
+        project.createAppBuildScript(template)
         project.createAppManifest()
         return project
     }
@@ -87,20 +85,19 @@ class TestProject {
             """.stripIndent()
     }
 
+    private void createAppBuildScript(BuildScriptTemplate template) {
+        def build = new File(projectDir, "app/$template.fileName")
+        build.parentFile.mkdirs()
+        build.text = template.content.stripIndent()
+        build.text = build.text.stripIndent()
+    }
+
     BuildResult build(String... args) {
         return GradleRunner.create()
                 .withProjectDir(projectDir)
                 .withArguments(args)
                 .forwardOutput()
                 .build()
-    }
-
-
-    private void createAppBuildScript(BuildScriptTemplate template, Action<File> config = {}) {
-        def build = new File(projectDir, "app/$template.fileName")
-        build.parentFile.mkdirs()
-        build.text = template.content.stripIndent()
-        config.execute(build)
     }
 
     private static final File findRoot(File current) {
