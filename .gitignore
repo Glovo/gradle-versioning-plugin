@@ -2,8 +2,12 @@
 .gradle/
 
 # Build output
-build/
-out/
+/build/
+/out/
+/plugin/core/build/
+/plugin/core/out/
+/plugin/kotlin-extensions/build/
+/plugin/kotlin-extensions/out/
 
 # IntelliJ/Android Studio
 *.iml
@@ -14,6 +18,7 @@ out/
 .idea/modules
 .idea/modules.xml
 .idea/runConfigurations.xml
+.idea/uiDesigner.xml
 .idea/vcs.xml
 .idea/**/libraries
 .idea/**/gradle.xml

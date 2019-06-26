@@ -1,2 +1,2 @@
 include ':plugin:core'
-include ':plugin:kts-extensions'
+include ':plugin:kotlin-extensions'
