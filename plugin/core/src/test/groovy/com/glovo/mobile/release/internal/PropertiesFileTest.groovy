@@ -36,6 +36,20 @@ class PropertiesFileTest {
     }
 
     @Test
+    void throwsWhenNoValueFoundForSpecifiedKey() {
+        def file = newPropertiesFile('one=1')
+        def properties = new PropertiesFile(file)
+
+        try {
+            properties['foo']
+
+            fail('NullPointException expected but not thrown')
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(NullPointerException)
+        }
+    }
+
+    @Test
     void returnsValueForSpecifiedKey() {
         def file = newPropertiesFile('one=1')
 
@@ -62,6 +76,24 @@ class PropertiesFileTest {
         properties.put('one', 'uno')
 
         assertThat(file.text).contains('one=uno')
+    }
+
+    @Test
+    void returnsTrueWhenContainsValueForSpecifiedKey() {
+        def file = newPropertiesFile('one=1')
+
+        def properties = new PropertiesFile(file)
+
+        assertThat(properties.contains('one')).isTrue()
+    }
+
+    @Test
+    void returnsFalseWhenContainsNoValueForSpecifiedKey() {
+        def file = newPropertiesFile('one=1')
+
+        def properties = new PropertiesFile(file)
+
+        assertThat(properties.contains('foo')).isFalse()
     }
 
     private File newPropertiesFile(String content) {
