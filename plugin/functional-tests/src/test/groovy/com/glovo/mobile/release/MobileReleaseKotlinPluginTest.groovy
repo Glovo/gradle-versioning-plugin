@@ -6,11 +6,11 @@ import org.junit.Test
 
 import static com.google.common.truth.Truth.assertThat
 
-class MobileReleaseGroovyPluginTest {
+class MobileReleaseKotlinPluginTest {
 
     @Test
     void appliesPluginCorrectly() {
-        def project = TestProject.groovy('simple-test-groovy')
+        def project = TestProject.kotlin('simple-test-kotlin')
 
         def result = GradleRunner.create()
                 .withProjectDir(project.projectDir)
@@ -18,6 +18,6 @@ class MobileReleaseGroovyPluginTest {
                 .forwardOutput()
                 .build()
 
-        assertThat(result.output).contains('Applied com.glovo.mobile.release.MobileReleaseGroovyPlugin')
+        assertThat(result.output).contains('Applied com.glovo.mobile.release.MobileReleaseKotlinScriptPlugin')
     }
 }
