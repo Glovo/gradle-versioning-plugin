@@ -12,6 +12,7 @@ buildscript {
 }
 
 repositories {
+    google()
     mavenCentral()
 }
 
@@ -21,4 +22,6 @@ dependencies {
     implementation gradleApi()
     implementation project(':plugin:core')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin"
+
+    compileOnly 'com.android.tools.build:gradle:3.4.1'
 }
