@@ -1,6 +1,6 @@
 package com.glovo.test
 
-
+import com.google.common.base.Preconditions
 import com.google.common.io.Resources
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
@@ -78,6 +78,7 @@ class TestProject {
                 }
             }
             """.stripIndent()
+        println("Created root build script at $build.path")
         return build
     }
 
@@ -91,6 +92,7 @@ class TestProject {
                 <application />
             </manifest>
             """.stripIndent()
+        println("Created app manifest at $manifest.path")
         return manifest
     }
 
@@ -98,7 +100,7 @@ class TestProject {
         def build = new File(projectDir, "app/$template.fileName")
         build.parentFile.mkdirs()
         build.text = template.content.stripIndent()
-        build.text = build.text.stripIndent()
+        println("Created app build script at $build.path")
         return build
     }
 
@@ -113,6 +115,35 @@ class TestProject {
                 .withArguments(args)
                 .forwardOutput()
                 .build()
+    }
+
+    String getAppBuildScript() {
+        return appBuildScript.text
+    }
+
+    void setAppBuildScript(String value) {
+        appBuildScript.text = value.stripIndent()
+    }
+
+    File newPropertiesFile(String path, Map<String, ?> content) {
+        def text = content.entrySet()
+            .collect { "$it.key=$it.value" }
+            .join('\n')
+        return newFile(path, text)
+    }
+
+    File newFile(String path, String content) {
+        def file = new File(projectDir, path)
+        file.parentFile.mkdirs()
+        file.text = content.stripIndent()
+        return file
+    }
+
+    String getGeneratedBuildConfig(String... variants = ['debug']) {
+        def variantPath = variants.join('/')
+        def file = new File(projectDir, "app/build/generated/source/buildConfig/$variantPath/com/glovo/test/BuildConfig.java")
+        Preconditions.checkArgument(file.exists(), "Generated BuildConfig not found at $file.path")
+        return file.text
     }
 
     private static final File findRoot(File current) {
