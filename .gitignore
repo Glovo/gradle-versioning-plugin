@@ -8,6 +8,8 @@
 /plugin/core/out/
 /plugin/kotlin-extensions/build/
 /plugin/kotlin-extensions/out/
+/plugin/functional-tests/build/
+/plugin/functional-tests/out/
 
 # IntelliJ/Android Studio
 *.iml
