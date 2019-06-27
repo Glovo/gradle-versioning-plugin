@@ -8,7 +8,7 @@ import org.junit.runners.Parameterized
 import static com.google.common.truth.Truth.assertThat
 
 @RunWith(Parameterized)
-class IncrementVersionsTest {
+class IncrementVersionNameTest {
 
     @Parameterized.Parameters
     static def parameters() {
@@ -20,7 +20,7 @@ class IncrementVersionsTest {
 
     private final Closure<TestProject> createProject
 
-    IncrementVersionsTest(Closure<TestProject> createProject) {
+    IncrementVersionNameTest(Closure<TestProject> createProject) {
         this.createProject = createProject
     }
 
