@@ -1,0 +1,29 @@
+pipeline {
+    agent {
+        node {
+            label 'mobile'
+        }
+    }
+    environment {
+        ANDROID_SDK_ROOT = '/opt/android-sdk/'
+    }
+    stages {
+        stage('Build plugins') {
+            steps {
+                sh "./gradlew --stacktrace clean build"
+            }
+            post {
+                always {
+                    junit "**/build/test-results/**/*.xml"
+                }
+            }
+        }
+        stage('Build Demos') {
+            steps {
+                dir('demo/android') {
+                    sh "./gradlew --stacktrace clean build"
+                }
+            }
+        }
+    }
+}
