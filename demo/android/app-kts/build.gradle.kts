@@ -17,9 +17,10 @@ android {
         minSdkVersion(19)
         targetSdkVersion(28)
         applicationId = "com.glovo.test.demo"
-        versionCode = 1
-        versionName = "1.0"
         multiDexEnabled = true
+
+        persistedVersionName(from = file("../android.properties"))
+        versionCode = 4321
     }
 
     compileOptions {
