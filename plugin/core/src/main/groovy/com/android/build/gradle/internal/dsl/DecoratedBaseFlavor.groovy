@@ -1,5 +1,7 @@
 package com.android.build.gradle.internal.dsl
 
+import com.glovo.mobile.release.IncrementPersistedSemanticVersionTask
+import com.glovo.mobile.release.PersistedSemanticVersion
 import com.glovo.mobile.release.internal.PropertiesFile
 
 class DecoratedBaseFlavor {
@@ -22,7 +24,17 @@ class DecoratedBaseFlavor {
 
     void setPersistedVersionName(def source) {
         PropertiesFile properties = propertiesFrom(source)
-        base.setVersionName(properties['versionName'])
+        def versionName = new PersistedSemanticVersion(properties, 'versionName')
+        base.setVersionName(versionName.toString())
+        def taskName = "increment${base.name.capitalize()}VersionName"
+        def task = base.project.tasks.findByName(taskName)
+        if (task == null) {
+            base.project.tasks.register(taskName, IncrementPersistedSemanticVersionTask) {
+                it.versionName.value(versionName)
+            }
+        } else {
+            (task as IncrementPersistedSemanticVersionTask).versionName.value(versionName)
+        }
     }
 
     void setPersistedVersionCode(def source) {
