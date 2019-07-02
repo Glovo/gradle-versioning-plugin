@@ -95,4 +95,4 @@ class PropertiesFileTest {
         assertThat(properties.contains('foo')).isFalse()
     }
 
-    }
+}
