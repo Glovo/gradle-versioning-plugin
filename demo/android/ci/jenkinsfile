@@ -1,0 +1,9 @@
+@Library('mobile-pipelines@PT-798') _
+
+defaultPipeline {
+    platform = 'android'
+    alphaStages = 'demo/android/ci/buildStages.groovy'
+    buildStages = 'demo/android/ci/buildStages.groovy'
+    prbStages = 'demo/android/ci/buildStages.groovy'
+    buildReleaseStages = 'demo/android/ci/buildStages.groovy'
+}
