@@ -1,9 +1,8 @@
 package com.glovo.mobile.release.internal
 
-
+import com.glovo.test.rules.TemporaryFolder
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TemporaryFolder
 
 import static com.google.common.truth.Truth.assertThat
 import static org.junit.Assert.fail
@@ -37,7 +36,7 @@ class PropertiesFileTest {
 
     @Test
     void throwsWhenNoValueFoundForSpecifiedKey() {
-        def file = newPropertiesFile('one=1')
+        def file = temp.newFile('one=1')
         def properties = new PropertiesFile(file)
 
         try {
@@ -51,7 +50,7 @@ class PropertiesFileTest {
 
     @Test
     void returnsValueForSpecifiedKey() {
-        def file = newPropertiesFile('one=1')
+        def file = temp.newFile('one=1')
 
         def properties = new PropertiesFile(file)
 
@@ -60,7 +59,7 @@ class PropertiesFileTest {
 
     @Test
     void updatesValueForSpecifiedKey() {
-        def file = newPropertiesFile('one=1')
+        def file = temp.newFile('one=1')
         def properties = new PropertiesFile(file)
 
         properties.put('one', 'uno')
@@ -70,7 +69,7 @@ class PropertiesFileTest {
 
     @Test
     void persistsUpdatedValueForSpecifiedKey() {
-        def file = newPropertiesFile('one=1')
+        def file = temp.newFile('one=1')
         def properties = new PropertiesFile(file)
 
         properties.put('one', 'uno')
@@ -80,7 +79,7 @@ class PropertiesFileTest {
 
     @Test
     void returnsTrueWhenContainsValueForSpecifiedKey() {
-        def file = newPropertiesFile('one=1')
+        def file = temp.newFile('one=1')
 
         def properties = new PropertiesFile(file)
 
@@ -89,16 +88,11 @@ class PropertiesFileTest {
 
     @Test
     void returnsFalseWhenContainsNoValueForSpecifiedKey() {
-        def file = newPropertiesFile('one=1')
+        def file = temp.newFile('one=1')
 
         def properties = new PropertiesFile(file)
 
         assertThat(properties.contains('foo')).isFalse()
     }
 
-    private File newPropertiesFile(String content) {
-        def file = temp.newFile()
-        file.write(content)
-        file
     }
-}
