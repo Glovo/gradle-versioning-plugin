@@ -11,7 +11,7 @@ class PersistedNumericVersion {
         return new PersistedNumericVersion(new PropertiesFile(file), key)
     }
 
-    private PersistedNumericVersion(PropertiesFile properties, String key) {
+    PersistedNumericVersion(PropertiesFile properties, String key) {
         this.properties = properties
         this.key = key
     }

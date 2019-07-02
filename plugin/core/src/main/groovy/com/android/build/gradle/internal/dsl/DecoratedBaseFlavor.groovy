@@ -1,6 +1,8 @@
 package com.android.build.gradle.internal.dsl
 
+import com.glovo.mobile.release.IncrementPersistedNumericVersionTask
 import com.glovo.mobile.release.IncrementPersistedSemanticVersionTask
+import com.glovo.mobile.release.PersistedNumericVersion
 import com.glovo.mobile.release.PersistedSemanticVersion
 import com.glovo.mobile.release.internal.PropertiesFile
 
@@ -25,7 +27,11 @@ class DecoratedBaseFlavor {
     void setPersistedVersionName(def source) {
         PropertiesFile properties = propertiesFrom(source)
         def versionName = new PersistedSemanticVersion(properties, 'versionName')
-        base.setVersionName(versionName.toString())
+        base.setVersionName(versionName.value)
+        configureVersionNameTask(versionName)
+    }
+
+    private void configureVersionNameTask(PersistedSemanticVersion versionName) {
         def taskName = "increment${base.name.capitalize()}VersionName"
         def task = base.project.tasks.findByName(taskName)
         if (task == null) {
@@ -39,7 +45,21 @@ class DecoratedBaseFlavor {
 
     void setPersistedVersionCode(def source) {
         PropertiesFile properties = propertiesFrom(source)
-        base.setVersionCode(properties['versionCode'] as int)
+        def versionCode = new PersistedNumericVersion(properties, 'versionCode')
+        base.setVersionCode(versionCode.value)
+        configureVersionCodeTask(versionCode)
+    }
+
+    private void configureVersionCodeTask(PersistedNumericVersion versionCode) {
+        def taskName = "increment${base.name.capitalize()}VersionCode"
+        def task = base.project.tasks.findByName(taskName)
+        if (task == null) {
+            base.project.tasks.register(taskName, IncrementPersistedNumericVersionTask) {
+                it.versionCode.value(versionCode)
+            }
+        } else {
+            (task as IncrementPersistedNumericVersionTask).versionCode.value(versionCode)
+        }
     }
 
     private static PropertiesFile propertiesFrom(def source) {
