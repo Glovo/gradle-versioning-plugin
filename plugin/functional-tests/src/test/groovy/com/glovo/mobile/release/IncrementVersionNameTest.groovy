@@ -26,7 +26,7 @@ class IncrementVersionNameTest {
 
     @Test
     void bumpsPatchVersionByDefault() {
-        TestProject project = createProject('increment-default')
+        TestProject project = createProject('increment-version-name-default')
         def versions = project.newPropertiesFile('app/versions.properties', [versionName: '1.1.1'])
 
         project.build('incrementMainVersionName')
@@ -36,7 +36,7 @@ class IncrementVersionNameTest {
 
     @Test
     void bumpsMajorVersion() {
-        TestProject project = createProject('increment-major')
+        TestProject project = createProject('increment-version-name-major')
         def versions = project.newPropertiesFile('app/versions.properties', [versionName: '1.1.1'])
 
         project.build('incrementMainVersionName', '--major')
@@ -46,7 +46,7 @@ class IncrementVersionNameTest {
 
     @Test
     void bumpsMinorVersion() {
-        TestProject project = createProject('increment-groovy-minor')
+        TestProject project = createProject('increment-version-name-minor')
         def versions = project.newPropertiesFile('app/versions.properties', [versionName: '1.1.1'])
 
         project.build('incrementMainVersionName', '--minor')
@@ -56,7 +56,7 @@ class IncrementVersionNameTest {
 
     @Test
     void bumpsPatchVersion() {
-        TestProject project = createProject('increment-groovy-patch')
+        TestProject project = createProject('increment-version-name-patch')
         def versions = project.newPropertiesFile('app/versions.properties', [versionName: '1.1.1'])
 
         project.build('incrementMainVersionName', '--patch')
