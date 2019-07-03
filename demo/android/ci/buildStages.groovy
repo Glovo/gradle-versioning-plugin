@@ -1,7 +1,8 @@
 def call(pipelineParams) {
 
     stage('Build') {
-        echo 'Build started'
+        echo 'Start build'
+        sh './gradlew :app:assemble'
         echo 'Build finished'
     }
 
