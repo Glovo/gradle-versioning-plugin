@@ -1,10 +1,8 @@
 def call(pipelineParams) {
 
-    ecsAgent(pipelineParams.lightAgent) {
-        stage('Build') {
-            echo 'Build started'
-            echo 'Build finished'
-        }
+    stage('Build') {
+        echo 'Build started'
+        echo 'Build finished'
     }
 
 }
