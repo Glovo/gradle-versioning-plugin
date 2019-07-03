@@ -2,8 +2,8 @@
 
 defaultPipeline {
     platform = 'android'
-    alphaStages = 'demo/android/ci/buildStages.groovy'
-    buildStages = 'demo/android/ci/buildStages.groovy'
-    prbStages = 'demo/android/ci/buildStages.groovy'
-    buildReleaseStages = 'demo/android/ci/buildStages.groovy'
+    alphaStages = 'demo/android/ci/dummyStages.groovy'
+    buildStages = 'demo/android/ci/dummyStages.groovy'
+    prbStages = 'demo/android/ci/dummyStages.groovy'
+    buildReleaseStages = 'demo/android/ci/buildReleaseStages.groovy'
 }
