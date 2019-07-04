@@ -1,6 +1,6 @@
 def call(pipelineParams) {
 
-    ecsAgent(pipelineParams.mainAgent) {
+    withAgent(pipelineParams.mainAgent) {
         stage('Build') {
             checkout scm
             dir('demo/android') {
