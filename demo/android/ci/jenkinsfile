@@ -1,4 +1,4 @@
-@Library('mobile-pipelines@PT-798') _
+@Library('mobile-pipelines@release-snapshot') _
 
 defaultPipeline {
     platform = 'android'
