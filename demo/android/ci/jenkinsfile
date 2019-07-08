@@ -1,6 +1,6 @@
 @Library('mobile-pipelines@release-snapshot') _
 
-defaultPipeline {
+mobilePipeline {
     platform = 'android'
     stages = [
         'Build': 'demo/android/ci/dummyStages.groovy',
