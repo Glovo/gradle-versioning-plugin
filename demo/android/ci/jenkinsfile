@@ -3,7 +3,7 @@
 mobilePipeline {
     platform = 'android'
     stages = [
-        'Build': 'demo/android/ci/dummyStages.groovy',
-        'BuildRelease': 'demo/android/ci/buildReleaseStages.groovy'
+        'Build': { stage = 'demo/android/ci/dummyStages.groovy' },
+        'BuildRelease': { stage = 'demo/android/ci/buildReleaseStages.groovy' }
     ]
 }
