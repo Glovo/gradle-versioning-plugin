@@ -1,7 +1,6 @@
 @Library('mobile-pipelines@release-snapshot') _
 
-mobilePipeline {
-    platform = 'android'
+orchestratedPipeline {
     stages = [
         'Build': { stage = 'demo/android/ci/dummyStages.groovy' },
         'BuildRelease': { stage = 'demo/android/ci/buildReleaseStages.groovy' }
