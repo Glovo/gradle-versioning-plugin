@@ -1,4 +1,4 @@
-def call(pipelineParams) {
+def call(pipelineParams, stageConfig, stageParams) {
 
     stage('Dummy') {
         echo 'No op'
