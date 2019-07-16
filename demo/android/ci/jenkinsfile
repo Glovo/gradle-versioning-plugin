@@ -9,6 +9,7 @@ def testAwsEnvironment = {
 }
 
 orchestratedPipeline {
+    gitCredentialsId = 'de4d6d8f-1155-4983-b9ca-565f9d64e808'
     stages = [
         'Build': { stage = 'demo/android/ci/dummyStages.groovy' },
         'BuildRelease': { stage = 'demo/android/ci/buildReleaseStages.groovy' }
