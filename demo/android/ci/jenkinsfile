@@ -5,4 +5,14 @@ orchestratedPipeline {
         'Build': { stage = 'demo/android/ci/dummyStages.groovy' },
         'BuildRelease': { stage = 'demo/android/ci/buildReleaseStages.groovy' }
     ]
+
+    mainAgent = {
+        image = '953109185106.dkr.ecr.eu-west-1.amazonaws.com/mobile-ci:base-latest'
+        aws = {
+                aws  = "aws"
+                template = "mobile"
+                repo = "mobile-ci"
+                endpoint = "953109185106.dkr.ecr.eu-west-1.amazonaws.com"
+            }
+    }
 }
