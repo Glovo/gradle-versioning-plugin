@@ -1,4 +1,7 @@
 pipeline {
+    parameters {
+        booleanParam defaultValue: false, description: 'Perform the publication to s3', name: 'Publish'
+    }
     agent {
         node {
             label 'mobile'
@@ -23,6 +26,16 @@ pipeline {
                 dir('demo/android') {
                     sh "./gradlew --stacktrace clean build"
                 }
+            }
+        }
+        stage('Publish SDK artifacts') {
+            when {
+                expression {
+                    params.Publish
+                }
+            }
+            steps {
+                sh "./gradlew --stacktrace publish"
             }
         }
     }
