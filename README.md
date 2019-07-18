@@ -18,6 +18,7 @@ If that is not the case then you should submit a ticket to the platform team usi
 3. Add the S3 bucket as an additional repository in your project, as follows:
 
 ```groovy
+// Groovy
 buildscript {
     repositories {
         maven {
@@ -33,9 +34,31 @@ buildscript {
 }
 ```
 
+```kotlin
+// Kotlin
+buildscript {
+    repositories {
+        maven(
+            url="s3://android-artifact-repository-main-bucket-bucket-124ev9rdkbskl/maven",
+            authentication = {
+                awsIm(AwsImAuthentication)
+            })
+    }
+    dependencies {
+        classpath("com.glovo.gradle:android-version-plugin-kotlin:0.0.1")
+    }
+}
+```
+
 ## Releasing
 
-At the moment this plugin is published to a private AWS S3 bucket. A new version of the artifacts can be released by running:
+At the moment this plugin is published to a private AWS S3 bucket.
+To increment the version of the plugin to release modify the `version` property in the root [`build.gradle`](build.gradle) file:
+```groovy
+version = major.minor.patch
+```
+
+A new version of the artifacts can be released by running:
 ```
 ./gradlew publish
 ``` 
