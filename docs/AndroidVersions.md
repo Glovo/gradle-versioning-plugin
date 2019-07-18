@@ -11,11 +11,22 @@ The plugin exposes a `persistedVersionName` extension for any `BaseFlavor` confi
 Android Gradle Plugin. Example:
 
 ```groovy
+// Groovy
 android {
     defaultConfig {
         // other config ...
         persistedVersionName from: file('versions.properties')
         versionCode 1
+    }
+}
+```
+```kotlin
+// Kotlin
+android {
+    defaultConfig {
+        // other config ...
+        persistedVersionName(from=file('versions.properties'))
+        versionCode = 1
     }
 }
 ```
@@ -53,11 +64,23 @@ The plugin exposes a `persistedVersionCode` extension for any `BaseFlavor` confi
 Android Gradle Plugin. Example:
 
 ```groovy
+// Groovy
 android {
     defaultConfig {
         // other config ...
         versionName '1.2.3'
         persistedVersionCode from: file('versions.properties')
+    }
+}
+```
+
+```kotlin
+// Kotlin
+android {
+    defaultConfig {
+        // other config ...
+        versionName = "1.2.3"
+        persistedVersionCode(from=file('versions.properties'))
     }
 }
 ```
@@ -89,10 +112,20 @@ In case consumers wanted to use the same properties file to host both the persis
 and `versionCode` then they will be able to use the convenience extension `persistedVersions`, eg:
 
 ```groovy
+// Groovy
 android {
     defaultConfig {
         // other config ...
         persistedVersions from: file('versions.properties')
+    }
+}
+```
+```kotlin
+// Kotlin
+android {
+    defaultConfig {
+        // other config ...
+        persistedVersions(from=file('versions.properties'))
     }
 }
 ```
