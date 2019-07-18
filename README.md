@@ -18,6 +18,7 @@ If that is not the case then you should submit a ticket to the platform team usi
 3. Add the S3 bucket as an additional repository in your project, as follows:
 
 ```groovy
+// Groovy
 buildscript {
     repositories {
         maven {
@@ -29,6 +30,22 @@ buildscript {
     }
     dependencies {
         classpath 'com.glovo.gradle:android-version-plugin:0.0.1'
+    }
+}
+```
+
+```kotlin
+// Kotlin
+buildscript {
+    repositories {
+        maven(
+            url="s3://android-artifact-repository-main-bucket-bucket-124ev9rdkbskl/maven",
+            authentication = {
+                awsIm(AwsImAuthentication)
+            })
+    }
+    dependencies {
+        classpath("com.glovo.gradle:android-version-plugin:0.0.1")
     }
 }
 ```
