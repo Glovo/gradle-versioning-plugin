@@ -4,7 +4,7 @@ static String readReleaseNotes() {
         """.stripIndent()
 }
 
-def call(pipelineParams, stageConfig, stageParams) {
+def call(pipelineParams, stageConfig, stageParams, input) {
 
     withAgent(pipelineParams.mainAgent) {
         stage('Build') {
