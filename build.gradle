@@ -3,3 +3,7 @@ buildscript {
         mavenCentral()
     }
 }
+
+version = '0.0.1'
+
+apply from: 'gradle/publish.gradle'
