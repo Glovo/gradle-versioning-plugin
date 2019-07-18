@@ -17,6 +17,7 @@ repositories {
 }
 
 apply plugin: 'kotlin'
+apply plugin: 'maven-publish'
 
 dependencies {
     implementation gradleApi()
@@ -24,4 +25,25 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin"
 
     compileOnly 'com.android.tools.build:gradle:3.4.1'
+}
+
+publishing {
+
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.glovo.gradle'
+            artifactId = 'android-version-plugin-kotlin'
+            version = '0.0.1'
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            url "s3://android-artifact-repository-main-bucket-bucket-124ev9rdkbskl/maven"
+            authentication {
+                awsIm(AwsImAuthentication)
+            }
+        }
+    }
 }
