@@ -1,0 +1,34 @@
+static void configurePublishing(Project project, String id) {
+    project.with {
+
+        plugins.withId('java') {
+
+            apply plugin: 'maven-publish'
+
+            publishing {
+
+                publications {
+                    maven(MavenPublication) {
+                        groupId = 'com.glovo.gradle'
+                        artifactId = id
+                        version = rootProject.version
+                        from(components.java)
+                    }
+                }
+
+                repositories {
+                    maven {
+                        url "s3://android-artifact-repository-main-bucket-bucket-124ev9rdkbskl/maven"
+                        authentication {
+                            awsIm(AwsImAuthentication)
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+}
+
+configurePublishing(project(':plugin:core'), 'android-version-plugin')
+configurePublishing(project(':plugin:kotlin-extensions'), 'android-version-plugin-kotlin')
