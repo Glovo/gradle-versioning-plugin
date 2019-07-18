@@ -2,6 +2,10 @@
 
 A Gradle plugin to unify the release workflow of mobile apps.
 
+## Features
+
+- Supports automated update of `versionName` and `versionCode` of an Android app: [how to use persisted versions](/docs/AndroidVersions.md)
+
 ## Downloading
 
 In order to download the plugin from the private bucket, you need:
