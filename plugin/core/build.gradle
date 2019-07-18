@@ -5,6 +5,7 @@ repositories {
 }
 
 apply plugin: 'groovy'
+apply plugin: 'maven-publish'
 
 dependencies {
 	implementation gradleApi()
@@ -12,4 +13,25 @@ dependencies {
 
 	testImplementation 'junit:junit:4.12'
 	testImplementation 'com.google.truth:truth:0.45'
+}
+
+publishing {
+
+	publications {
+		maven(MavenPublication) {
+			groupId = 'com.glovo.gradle'
+			artifactId = 'android-version-plugin'
+			version = '0.0.1'
+			from components.java
+		}
+	}
+
+	repositories {
+		maven {
+			url "s3://android-artifact-repository-main-bucket-bucket-124ev9rdkbskl/maven"
+			authentication {
+				awsIm(AwsImAuthentication)
+			}
+		}
+	}
 }
