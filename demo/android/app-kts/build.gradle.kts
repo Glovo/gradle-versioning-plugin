@@ -11,12 +11,13 @@ buildscript {
 apply(plugin = "com.glovo.mobile-release-kotlin")
 
 android {
+
     compileSdkVersion(28)
 
     defaultConfig {
         minSdkVersion(19)
         targetSdkVersion(28)
-        applicationId = "com.glovo.test.demo"
+        applicationId = "com.glovo.demo.release.kotlin"
         multiDexEnabled = true
 
         persistedVersionName(from = file("../android.properties"))
@@ -28,4 +29,8 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
+}
+
+dependencies {
+    implementation(project(":common"))
 }
