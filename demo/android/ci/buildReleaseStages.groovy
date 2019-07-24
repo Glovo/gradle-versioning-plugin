@@ -13,6 +13,21 @@ def call(pipelineParams, stageConfig, stageParams, input) {
                 sh './gradlew --no-daemon :app:assemble'
             }
         }
+        stage('Release to GitHub') {
+            withAuth.secretText('mr-archano-github-token') { githubToken ->
+                def version = "v$BRANCH_NAME" - 'release/' + "-RC$BUILD_NUMBER"
+                githubRelease {
+                    apiToken = githubToken
+                    repo = 'glovo/gradle-mobile-release-plugin'
+                    tag = version
+                    name = "Release $version"
+                    body = "Body for $version"
+                    isDraft = false
+                    asset('**/*.apk')
+                }
+            }
+
+        }
         stage('Deploy to HockeyApp') {
             withCredentials([string(credentialsId: 'hockey-app-token', variable: 'HOCKEY_API_TOKEN')]) {
                 hockeyApp(
