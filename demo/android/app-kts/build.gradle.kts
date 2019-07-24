@@ -29,6 +29,30 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
+    signingConfigs {
+        maybeCreate("debug").apply {
+            storeFile = rootProject.file("debug.jks")
+            storePassword = "android"
+            keyAlias = "debug"
+            keyPassword = "android"
+        }
+        maybeCreate("release").apply {
+            storeFile = rootProject.file("release.jks")
+            storePassword = "android"
+            keyAlias = "release"
+            keyPassword = "android"
+        }
+    }
+
+    buildTypes {
+        getByName("debug") {
+            signingConfig = signingConfigs["debug"]
+        }
+        getByName("release") {
+            signingConfig = signingConfigs["release"]
+        }
+    }
+
 }
 
 dependencies {
