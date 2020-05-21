@@ -1,6 +1,14 @@
 buildscript {
     repositories {
         mavenCentral()
+        maven {
+            name "glovo"
+            url "https://artifactory.glovoint.com/artifactory/gradle-release"
+            credentials {
+                username = project.findProperty('artifactory_user')
+                password = project.findProperty('artifactory_key')
+            }
+        }
     }
 }
 
