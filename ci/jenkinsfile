@@ -1,6 +1,6 @@
 pipeline {
     parameters {
-        booleanParam defaultValue: false, description: 'Perform the publication to s3', name: 'Publish'
+        booleanParam defaultValue: false, description: 'Perform the publication to artifactory', name: 'Publish'
     }
     agent {
         node {
@@ -35,7 +35,7 @@ pipeline {
                 }
             }
             steps {
-                sh "./gradlew --stacktrace publish"
+                sh "./gradlew --stacktrace artifactoryPublish"
             }
         }
     }
