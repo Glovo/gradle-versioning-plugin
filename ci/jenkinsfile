@@ -1,4 +1,7 @@
+library 'glovo-jenkins-pipelines@v3.4.3'
+
 pipeline {
+
     parameters {
         booleanParam defaultValue: false, description: 'Perform the publication to artifactory', name: 'Publish'
     }
@@ -9,6 +12,8 @@ pipeline {
     }
     environment {
         ANDROID_SDK_ROOT = '/opt/android-sdk/'
+        ORG_GRADLE_PROJECT_artifactory_user = 'jenkins'
+        ORG_GRADLE_PROJECT_artifactory_key = 'password'
     }
     stages {
         stage('Build plugins') {
