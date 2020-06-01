@@ -2,45 +2,12 @@ buildscript {
     repositories {
         mavenCentral()
         maven {
-            name "glovo"
-            url "https://artifactory.glovoint.com/artifactory/gradle-release"
-            credentials {
-                username = project.findProperty('artifactory_user')
-                password = project.findProperty('artifactory_key')
-            }
+            url "https://plugins.gradle.org/m2/"
         }
+    }
+    dependencies {
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.15.2"
     }
 }
 
-plugins {
-    id("com.glovoapp.artifactory") version "0.1.0"
-}
-
-artifactory {
-    contextUrl = "https://artifactory.glovoint.com/artifactory/"
-    publish {
-        repository {
-            repoKey = 'gradle-release-local'
-            username = project.findProperty('artifactory_user')
-            password = project.findProperty('artifactory_key')
-            maven = true
-
-        }
-        defaults {
-            publications('mavenJava')
-            publishArtifacts true
-        }
-    }
-    resolve {
-        repository {
-            repoKey = 'gradle-release'
-            username = project.findProperty('artifactory_user')
-            password = project.findProperty('artifactory_key')
-            maven = true
-        }
-    }
-}
-
-version = '0.0.1'
-
-apply from: 'gradle/publish.gradle'
+apply from: "gradle/publish.gradle"
