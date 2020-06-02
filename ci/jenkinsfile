@@ -1,41 +1,46 @@
-pipeline {
-    parameters {
-        booleanParam defaultValue: false, description: 'Perform the publication to s3', name: 'Publish'
-    }
-    agent {
-        node {
-            label 'mobile'
+library 'glovo-jenkins-pipelines@v3.4.3'
+
+withAuth.secretText("ARTIFACTORY_PASSWORD") { password ->
+    env.ANDROID_SDK_ROOT = '/opt/android-sdk/'
+    env.ORG_GRADLE_PROJECT_artifactory_user = 'jenkins'
+    env.ORG_GRADLE_PROJECT_artifactory_key = password
+
+    pipeline {
+        parameters {
+            booleanParam defaultValue: false, description: 'Perform the publication to artifactory', name: 'Publish'
         }
-    }
-    environment {
-        ANDROID_SDK_ROOT = '/opt/android-sdk/'
-    }
-    stages {
-        stage('Build plugins') {
-            steps {
-                sh "./gradlew --stacktrace clean build"
-            }
-            post {
-                always {
-                    junit "**/build/test-results/**/*.xml"
-                }
+        agent {
+            node {
+                label 'mobile'
             }
         }
-        stage('Build Demos') {
-            steps {
-                dir('demo/android') {
+        stages {
+            stage('Build plugins') {
+                steps {
                     sh "./gradlew --stacktrace clean build"
                 }
-            }
-        }
-        stage('Publish SDK artifacts') {
-            when {
-                expression {
-                    params.Publish
+                post {
+                    always {
+                        junit "**/build/test-results/**/*.xml"
+                    }
                 }
             }
-            steps {
-                sh "./gradlew --stacktrace publish"
+            stage('Build Demos') {
+                steps {
+                    dir('demo/android') {
+                        sh "./gradlew --stacktrace clean build"
+                    }
+                }
+            }
+            stage('Publish SDK artifacts') {
+                when {
+                    expression {
+                        params.Publish
+                    }
+                }
+                steps {
+                    sh "./gradlew --stacktrace artifactoryPublish"
+                }
             }
         }
     }
