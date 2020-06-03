@@ -21,7 +21,6 @@ pipeline {
         stage('Build plugins') {
             steps {
                 sh "./gradlew --stacktrace clean build"
-                sh "./gradlew --stacktrace artifactoryPublish --debug"
             }
             post {
                 always {
@@ -43,7 +42,7 @@ pipeline {
                 }
             }
             steps {
-                sh "./gradlew --stacktrace artifactoryPublish"
+                sh "./gradlew --stacktrace artifactoryPublish --debug"
             }
         }
     }

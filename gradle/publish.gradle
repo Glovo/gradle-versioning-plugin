@@ -2,6 +2,7 @@ static void configurePublishing(Project project, String id) {
     project.with {
         apply plugin: 'maven-publish'
         apply plugin: 'com.jfrog.artifactory'
+        // Skip for root project
         artifactoryPublish.skip = true
 
         plugins.withId('java') {
@@ -19,7 +20,6 @@ static void configurePublishing(Project project, String id) {
                     defaults {
                         publications('mavenJava')
                         publishArtifacts true
-                        version = "0.0.1"
                     }
                 }
                 resolve {
