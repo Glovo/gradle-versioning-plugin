@@ -1,10 +1,10 @@
 static void configurePublishing(Project project, String id) {
     project.with {
+        apply plugin: 'maven-publish'
+        apply plugin: 'com.jfrog.artifactory'
+        artifactoryPublish.skip = true
 
         plugins.withId('java') {
-            apply plugin: 'maven-publish'
-
-            apply plugin: 'com.jfrog.artifactory'
 
             artifactory {
                 contextUrl = "https://artifactory.glovoint.com/artifactory/"
@@ -28,6 +28,16 @@ static void configurePublishing(Project project, String id) {
                         username = project.findProperty('artifactory_user')
                         password = project.findProperty('artifactory_key')
                         maven = true
+                    }
+                }
+            }
+            publishing {
+                publications {
+                    mavenJava(MavenPublication) {
+                        groupId = 'com.glovo.gradle'
+                        artifactId = id
+                        version = "0.0.1"
+                        from(components.java)
                     }
                 }
             }
