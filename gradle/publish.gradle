@@ -41,6 +41,9 @@ static void configurePublishing(Project project, String id) {
                     }
                 }
             }
+            artifactoryPublish {
+                publications('mavenJava')
+            }
         }
     }
 }
