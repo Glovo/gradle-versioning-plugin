@@ -42,7 +42,7 @@ pipeline {
                 }
             }
             steps {
-                sh "./gradlew --stacktrace artifactoryPublish"
+                sh "./gradlew --stacktrace artifactoryPublish --debug"
             }
         }
     }
