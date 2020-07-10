@@ -1,31 +1,49 @@
 static void configurePublishing(Project project, String id) {
     project.with {
+        apply plugin: 'maven-publish'
+        apply plugin: 'com.jfrog.artifactory'
+        // Skip for root project
+        artifactoryPublish.skip = true
 
         plugins.withId('java') {
 
-            apply plugin: 'maven-publish'
+            artifactory {
+                contextUrl = "https://artifactory.glovoint.com/artifactory/"
+                publish {
+                    repository {
+                        repoKey = 'gradle-release-local'
+                        username = project.findProperty('artifactory_user')
+                        password = project.findProperty('artifactory_key')
+                        maven = true
 
-            publishing {
-
-                publications {
-                    maven(MavenPublication) {
-                        groupId = 'com.glovo.gradle'
-                        artifactId = id
-                        version = rootProject.version
-                        from(components.java)
+                    }
+                    defaults {
+                        publications('mavenJava')
+                        publishArtifacts true
                     }
                 }
-
-                repositories {
-                    maven {
-                        url "s3://android-artifact-repository-main-bucket-bucket-124ev9rdkbskl/maven"
-                        authentication {
-                            awsIm(AwsImAuthentication)
-                        }
+                resolve {
+                    repository {
+                        repoKey = 'gradle-release'
+                        username = project.findProperty('artifactory_user')
+                        password = project.findProperty('artifactory_key')
+                        maven = true
                     }
                 }
             }
-
+            publishing {
+                publications {
+                    mavenJava(MavenPublication) {
+                        groupId = 'com.glovo.gradle'
+                        artifactId = id
+                        version = "0.0.1"
+                        from(components.java)
+                    }
+                }
+            }
+            artifactoryPublish {
+                publications('mavenJava')
+            }
         }
     }
 }
