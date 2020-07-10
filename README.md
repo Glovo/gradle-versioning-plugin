@@ -8,51 +8,12 @@ A Gradle plugin to unify the release workflow of mobile apps.
 
 ## Downloading
 
-In order to download the plugin from the private bucket, you need:
-
-1. An AWS account that can access the S3 bucket with id `android-artifact-repository-main-bucket-bucket-124ev9rdkbskl`.
-If that is not the case then you should submit a ticket to the platform team using this form: https://glovoapp.atlassian.net/servicedesk/customer/portal/26
- 
-2. Set up the AWS CLI, as explained [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html), and configure it, as shown [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html#cli-quick-configuration).
-
-3. Add the S3 bucket as an additional repository in your project, as follows:
-
-```groovy
-// Groovy
-buildscript {
-    repositories {
-        maven {
-            url "s3://android-artifact-repository-main-bucket-bucket-124ev9rdkbskl/maven"
-            authentication {
-                awsIm(AwsImAuthentication)
-            }
-        }
-    }
-    dependencies {
-        classpath 'com.glovo.gradle:android-version-plugin:0.0.1'
-    }
-}
-```
-
-```kotlin
-// Kotlin
-buildscript {
-    repositories {
-        maven(
-            url="s3://android-artifact-repository-main-bucket-bucket-124ev9rdkbskl/maven",
-            authentication = {
-                awsIm(AwsImAuthentication)
-            })
-    }
-    dependencies {
-        classpath("com.glovo.gradle:android-version-plugin-kotlin:0.0.1")
-    }
-}
-```
+Plugin is currently hosted on Glovo Artifactory repository. For plugin to be used, set up Artifactory credentials on your dev machine, as explained in [the official documentation](https://github.com/Glovo/gradle-artifactory-plugin#user-local-setup).
 
 ## Releasing
 
-At the moment this plugin is published to a private AWS S3 bucket.
+At the moment this plugin is published in a private Artifactory repository.
+
 To increment the version of the plugin to release modify the `version` property in the root [`build.gradle`](build.gradle) file:
 ```groovy
 version = major.minor.patch
@@ -62,4 +23,4 @@ A new version of the artifacts can be released by running:
 ```
 ./gradlew publish
 ``` 
-The above command will push the new version to the S3 bucket provided you have the necessary credentials. This should only be done from the CI.
+The above command will push the new version to the Artifactory provided you have the necessary credentials. This should only be done from the CI.
