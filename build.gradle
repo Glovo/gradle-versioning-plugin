@@ -1,9 +1,8 @@
 buildscript {
     repositories {
+        google()
         mavenCentral()
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
+        gradlePluginPortal()
     }
     dependencies {
         classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.15.2"

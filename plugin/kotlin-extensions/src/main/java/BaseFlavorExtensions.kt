@@ -6,32 +6,32 @@ import java.io.File
 
 fun Project.propertiesFile(path: String): PropertiesFile = PropertiesFile(file(path))
 
-fun BaseFlavor.persistedVersions(from: PropertiesFile) {
-    val decorated = DecoratedBaseFlavor(this)
+fun BaseFlavor.persistedVersions(from: PropertiesFile, project: Project) {
+    val decorated = DecoratedBaseFlavor(this, project)
     decorated.setPersistedVersionsFrom(from)
 }
 
-fun BaseFlavor.persistedVersions(from: File) {
-    val decorated = DecoratedBaseFlavor(this)
+fun BaseFlavor.persistedVersions(from: File, project: Project) {
+    val decorated = DecoratedBaseFlavor(this, project)
     decorated.setPersistedVersionsFrom(from)
 }
 
-fun BaseFlavor.persistedVersionName(from: PropertiesFile) {
-    val decorated = DecoratedBaseFlavor(this)
+fun BaseFlavor.persistedVersionName(from: PropertiesFile, project: Project) {
+    val decorated = DecoratedBaseFlavor(this, project)
     decorated.setPersistedVersionName(from)
 }
 
-fun BaseFlavor.persistedVersionName(from: File) {
-    val decorated = DecoratedBaseFlavor(this)
+fun BaseFlavor.persistedVersionName(from: File, project: Project) {
+    val decorated = DecoratedBaseFlavor(this, project)
     decorated.setPersistedVersionName(from)
 }
 
-fun BaseFlavor.persistedVersionCode(from: PropertiesFile) {
-    val decorated = DecoratedBaseFlavor(this)
+fun BaseFlavor.persistedVersionCode(from: PropertiesFile, project: Project) {
+    val decorated = DecoratedBaseFlavor(this, project)
     decorated.setPersistedVersionCode(from)
 }
 
-fun BaseFlavor.persistedVersionCode(from: File) {
-    val decorated = DecoratedBaseFlavor(this)
+fun BaseFlavor.persistedVersionCode(from: File, project: Project) {
+    val decorated = DecoratedBaseFlavor(this, project)
     decorated.setPersistedVersionCode(from)
 }

@@ -5,13 +5,17 @@ import com.glovo.mobile.release.IncrementPersistedSemanticVersionTask
 import com.glovo.mobile.release.PersistedNumericVersion
 import com.glovo.mobile.release.PersistedSemanticVersion
 import com.glovo.mobile.release.internal.PropertiesFile
+import org.gradle.api.Project
 
 class DecoratedBaseFlavor {
 
     final BaseFlavor base
 
-    DecoratedBaseFlavor(BaseFlavor base) {
+    final Project project
+
+    DecoratedBaseFlavor(BaseFlavor base, Project project) {
         this.base = base
+        this.project = project
     }
 
     void setPersistedVersionsFrom(def source) {
@@ -33,9 +37,9 @@ class DecoratedBaseFlavor {
 
     private void configureVersionNameTask(PersistedSemanticVersion versionName) {
         def taskName = "increment${base.name.capitalize()}VersionName"
-        def task = base.project.tasks.findByName(taskName)
+        def task = project.tasks.findByName(taskName)
         if (task == null) {
-            base.project.tasks.register(taskName, IncrementPersistedSemanticVersionTask) {
+            project.tasks.register(taskName, IncrementPersistedSemanticVersionTask) {
                 it.versionName.value(versionName)
             }
         } else {
@@ -52,9 +56,9 @@ class DecoratedBaseFlavor {
 
     private void configureVersionCodeTask(PersistedNumericVersion versionCode) {
         def taskName = "increment${base.name.capitalize()}VersionCode"
-        def task = base.project.tasks.findByName(taskName)
+        def task = project.tasks.findByName(taskName)
         if (task == null) {
-            base.project.tasks.register(taskName, IncrementPersistedNumericVersionTask) {
+            project.tasks.register(taskName, IncrementPersistedNumericVersionTask) {
                 it.versionCode.value(versionCode)
             }
         } else {
