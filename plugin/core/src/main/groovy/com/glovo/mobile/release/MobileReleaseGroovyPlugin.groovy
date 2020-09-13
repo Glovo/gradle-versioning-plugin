@@ -14,9 +14,9 @@ class MobileReleaseGroovyPlugin implements Plugin<Project> {
         project.ext.propertiesFile = { path -> new PropertiesFile(project.file(path)) }
 
         project.plugins.withId('com.android.application') {
-            BaseFlavorGroovyDSL.extend(project.android.defaultConfig)
+            BaseFlavorGroovyDSL.extend(project.android.defaultConfig, project)
             project.android.productFlavors.all {
-                BaseFlavorGroovyDSL.extend(it)
+                BaseFlavorGroovyDSL.extend(it, project)
             }
         }
     }

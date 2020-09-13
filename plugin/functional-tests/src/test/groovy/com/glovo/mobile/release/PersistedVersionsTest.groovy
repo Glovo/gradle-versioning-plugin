@@ -19,7 +19,7 @@ class PersistedVersionsTest {
             project.appBuildScript += """\
                 android {
                     defaultConfig {
-                        persistedVersions from: file('versions.properties')
+                        persistedVersions from: file('versions.properties'), project: project
                     }
                 }
                 """
@@ -37,7 +37,7 @@ class PersistedVersionsTest {
             project.appBuildScript += """\
                 android {
                     defaultConfig {
-                        persistedVersionName from: file('versions.properties')
+                        persistedVersionName from: file('versions.properties'), project: project
                         versionCode 1
                     }
                 }
@@ -57,7 +57,7 @@ class PersistedVersionsTest {
                 android {
                     defaultConfig {
                         versionName '0.0.0'
-                        persistedVersionCode from: file('versions.properties')
+                        persistedVersionCode from: file('versions.properties'), project: project
                     }
                 }
                 """
@@ -75,7 +75,7 @@ class PersistedVersionsTest {
             project.appBuildScript += """\
                 android {
                     defaultConfig {
-                        persistedVersionName from: file('versions.properties')
+                        persistedVersionName from: file('versions.properties'), project: project
                         versionName '0.0.0'
                         versionCode 1
                     }
@@ -96,7 +96,7 @@ class PersistedVersionsTest {
                 android {
                     defaultConfig {
                         versionName '0.0.0'
-                        persistedVersionCode from: file('versions.properties')
+                        persistedVersionCode from: file('versions.properties'), project: project
                         versionCode 1234
                     }
                 }
@@ -137,7 +137,7 @@ class PersistedVersionsTest {
             project.appBuildScript += """\
                 android {
                     defaultConfig {
-                        persistedVersions(from=file("versions.properties"))
+                        persistedVersions(from=file("versions.properties"), project=project)
                     }
                 }
                 """
@@ -155,7 +155,7 @@ class PersistedVersionsTest {
             project.appBuildScript += """\
                 android {
                     defaultConfig {
-                        persistedVersionName(from=file("versions.properties"))
+                        persistedVersionName(from=file("versions.properties"), project=project)
                         versionCode = 1
                     }
                 }
@@ -175,7 +175,7 @@ class PersistedVersionsTest {
                 android {
                     defaultConfig {
                         versionName = "0.0.0"
-                        persistedVersionCode(from=file("versions.properties"))
+                        persistedVersionCode(from=file("versions.properties"), project=project)
                     }
                 }
                 """
@@ -193,7 +193,7 @@ class PersistedVersionsTest {
             project.appBuildScript += """\
                 android {
                     defaultConfig {
-                        persistedVersionName(from=file("versions.properties"))
+                        persistedVersionName(from=file("versions.properties"), project=project)
                         versionName = "0.0.0"
                         versionCode = 1
                     }
@@ -214,7 +214,7 @@ class PersistedVersionsTest {
                 android {
                     defaultConfig {
                         versionName = "0.0.0"
-                        persistedVersionCode(from=file("versions.properties"))
+                        persistedVersionCode(from=file("versions.properties"), project=project)
                         versionCode = 1234
                     }
                 }
