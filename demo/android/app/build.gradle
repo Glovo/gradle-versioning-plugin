@@ -2,6 +2,12 @@ buildscript {
     dependencies {
         classpath 'com.glovo.mobile-release:gradle-plugin:local'
     }
+    repositories {
+        google()
+        mavenCentral()
+        jcenter()
+        gradlePluginPortal()
+    }
 }
 
 apply plugin: 'com.android.application'

@@ -81,7 +81,7 @@ class IncrementVersionNameTest {
         project.appBuildScript += """\
                 android {
                     defaultConfig {
-                        persistedVersionName(from=file("versions.properties"))
+                        persistedVersionName(from=file("versions.properties"), project=project)
                     }
                 }
                 """

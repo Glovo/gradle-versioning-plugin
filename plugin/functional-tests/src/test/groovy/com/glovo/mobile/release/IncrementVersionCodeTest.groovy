@@ -51,7 +51,7 @@ class IncrementVersionCodeTest {
         project.appBuildScript += """\
                 android {
                     defaultConfig {
-                        persistedVersionCode(from=file("versions.properties"))
+                        persistedVersionCode(from=file("versions.properties"), project=project)
                     }
                 }
                 """
