@@ -20,7 +20,7 @@ android {
         applicationId = "com.glovo.demo.release.kotlin"
         multiDexEnabled = true
 
-        persistedVersionName(from = file("../android.properties"))
+        persistedVersionName(from = file("../android.properties"), project = project)
         versionCode = 4321
     }
 

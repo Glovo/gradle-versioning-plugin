@@ -26,3 +26,6 @@
 .idea/**/gradle.xml
 .idea/**/workspace.xml
 local.properties
+
+.idea/compiler.xml
+.idea/jarRepositories.xml

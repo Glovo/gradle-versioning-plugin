@@ -17,9 +17,10 @@ enum BuildScriptTemplate {
             repositories {
                 google()
                 mavenCentral()
+                gradlePluginPortal()
             }
             dependencies {
-                classpath 'com.android.tools.build:gradle:3.4.1'
+                classpath 'com.android.tools.build:gradle:4.0.1'
                 classpath 'com.glovo.mobile-release:gradle-plugin:local'
             }
         }
@@ -60,9 +61,10 @@ enum BuildScriptTemplate {
             repositories {
                 google()
                 mavenCentral()
+                gradlePluginPortal()
             }
             dependencies {
-                classpath ("com.android.tools.build:gradle:3.4.1")
+                classpath ("com.android.tools.build:gradle:4.0.1")
                 classpath("com.glovo.mobile-release:gradle-plugin-kotlin:local")
             }
         }

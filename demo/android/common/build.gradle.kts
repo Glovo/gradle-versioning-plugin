@@ -18,5 +18,5 @@ android {
 }
 
 dependencies {
-    api("androidx.appcompat:appcompat:1.0.2")
+    api("androidx.appcompat:appcompat:1.2.0")
 }
