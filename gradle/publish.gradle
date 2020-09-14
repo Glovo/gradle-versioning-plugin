@@ -36,7 +36,7 @@ static void configurePublishing(Project project, String id) {
                     mavenJava(MavenPublication) {
                         groupId = 'com.glovo.gradle'
                         artifactId = id
-                        version = "0.0.1"
+                        version = "0.0.2"
                         from(components.java)
                     }
                 }
