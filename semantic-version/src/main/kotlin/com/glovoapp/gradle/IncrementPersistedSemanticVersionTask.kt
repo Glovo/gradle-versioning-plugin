@@ -1,21 +1,27 @@
 package com.glovoapp.gradle
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
+import java.io.File
+import java.util.*
 
-@SuppressWarnings("UnstableApiUsage")
+@Suppress("LeakingThis")
 open class IncrementPersistedSemanticVersionTask() : DefaultTask() {
 
     init {
         group = "release"
+        onlyIf { version != null }
     }
 
-    @get:Input
-    var semanticVersion = PersistedSemanticVersion("version.properties")
+    @get:Nested
+    @get:Optional
+    val version
+        get() = project.version as? PersistedSemanticVersion
 
-    private var increment = SemanticVersion.Increment.PATCH
+    @Input
+    var increment = SemanticVersion.Increment.PATCH
 
     @Option(option = "major", description = "Increments major version")
     fun major() {
@@ -33,7 +39,9 @@ open class IncrementPersistedSemanticVersionTask() : DefaultTask() {
     }
 
     @TaskAction
-    fun run() {
-        semanticVersion.apply(increment)
+    fun run() = with(version!!) {
+        value += increment
+        flush()
     }
+
 }

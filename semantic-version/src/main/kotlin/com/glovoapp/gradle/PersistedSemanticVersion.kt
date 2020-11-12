@@ -1,37 +1,31 @@
 package com.glovoapp.gradle
 
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
+import java.io.File
 import java.util.Properties
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
-class PersistedSemanticVersion(private val propertiesPath: String, private val key: String = "version") {
+class PersistedSemanticVersion(
+        @get:InputFile val propertiesFile: File,
+        @get:Input val key: String = "version"
+) {
 
-    private val properties = Properties()
+    private val properties by lazy { Properties().also { propertiesFile.reader().use(it::load) } }
 
-    init {
-        properties.load(FileInputStream(propertiesPath))
-    }
-    
-    var value: String
-        get() {
-            return properties[key]!! as String
-        }
+    @get:Internal
+    var value: SemanticVersion
+        get() = properties.getProperty(key).let(SemanticVersion::parse)
         set(value) {
-            properties.put(key, value)
-            val stream = FileOutputStream(propertiesPath)
-            properties.store(stream, "")
-            stream.close()
+            properties[key] = value.toString()
         }
 
-    fun apply(increment: SemanticVersion.Increment) {
-        val newSemanticVersion = semanticVersion.increment(increment)
-        value = newSemanticVersion.toString()
+    fun flush() = propertiesFile.writer().use {
+        properties.store(it, null)
     }
 
-    private val semanticVersion: SemanticVersion
-        get() = SemanticVersion.parse(value)
+    override fun toString() = value.toString()
 
-    override fun toString(): String {
-        return value
-    }
 }
