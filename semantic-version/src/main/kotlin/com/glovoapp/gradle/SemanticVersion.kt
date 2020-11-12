@@ -1,22 +1,19 @@
 package com.glovoapp.gradle;
 
-import java.io.Serializable
-import java.util.regex.Pattern
-
 data class SemanticVersion(val major: Int, val minor: Int, val patch: Int) {
 
     enum class Increment { MAJOR, MINOR, PATCH }
 
     companion object {
-        private val VERSION_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)")
+        private val VERSION_PATTERN = "(\\d+)\\.(\\d+)\\.(\\d+)".toRegex()
 
-        fun parse(source: String) = with(VERSION_PATTERN.matcher(source)) {
-            check(matches()) { "Unsupported format for semantic version: $source" }
+        fun parse(source: String) = with(VERSION_PATTERN.matchEntire(source)) {
+            checkNotNull(this) { "Unsupported format for semantic version: $source" }
 
             SemanticVersion(
-                    major = group(1).toInt(),
-                    minor = group(2).toInt(),
-                    patch = group(3).toInt())
+                    major = groupValues[1].toInt(),
+                    minor = groupValues[2].toInt(),
+                    patch = groupValues[3].toInt())
         }
 
     }
