@@ -1,0 +1,41 @@
+library 'glovo-jenkins-pipelines@v4.0.0'
+
+withAuth.secretText("ARTIFACTORY_PASSWORD") { password ->
+    env.ORG_GRADLE_PROJECT_artifactory_user = 'jenkins'
+    env.ORG_GRADLE_PROJECT_artifactory_key = password
+
+    orchestratedPipeline {
+        gitCredentialsId = "GlovoRobotTokenPRs"
+        stages = [
+                Master         : {
+                    stage = "jenkins/master/stage.groovy"
+                },
+                BuildPR       : {
+                    stage = "jenkins/pr/stage.groovy"
+                }
+        ]
+
+        orchestration = [
+                "master"                : {
+                    nextStages = ['Master']
+                },
+                "_default"              : {
+                    nextStages = ["NotImplemented"]
+                    pr = "BuildPR"
+                }
+        ]
+
+        mainAgent = {
+            dockerFile = "jenkins/DockerFile"
+            additionalFilesForDocker = [
+                    "gradle/wrapper/gradle-wrapper.properties"
+            ]
+            memory = 8192
+            cpu = 4096
+        }
+
+        sharedConfig = [
+                githubTokenId: 'glovo-robot-github-token-for-releases'
+        ]
+    }
+}
