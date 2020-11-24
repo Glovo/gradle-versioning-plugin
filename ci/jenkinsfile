@@ -1,49 +1,41 @@
-library 'glovo-jenkins-pipelines@v3.4.3'
+library 'glovo-jenkins-pipelines@v4.0.0'
 
 withAuth.secretText("ARTIFACTORY_PASSWORD") { password ->
-    env.ANDROID_SDK_ROOT = '/opt/android-sdk/'
     env.ORG_GRADLE_PROJECT_artifactory_user = 'jenkins'
     env.ORG_GRADLE_PROJECT_artifactory_key = password
-}
-pipeline {
-    parameters {
-        booleanParam defaultValue: false, description: 'Perform the publication to Artifactory', name: 'Publish'
-    }
-    agent {
-        node {
-            label 'mobile'
-        }
-    }
-    environment {
-        ANDROID_SDK_ROOT = '/opt/android-sdk/'
-    }
-    stages {
-        stage('Build plugins') {
-            steps {
-                sh "./gradlew --stacktrace clean build"
-            }
-            post {
-                always {
-                    junit "**/build/test-results/**/*.xml"
+
+    orchestratedPipeline {
+        gitCredentialsId = "GlovoRobotTokenPRs"
+        stages = [
+                Master         : {
+                    stage = "ci/master/stage.groovy"
+                },
+                BuildPR       : {
+                    stage = "ci/pr/stage.groovy"
                 }
-            }
-        }
-        stage('Build Demos') {
-            steps {
-                dir('demo/android') {
-                    sh "./gradlew --stacktrace clean build"
+        ]
+
+        orchestration = [
+                "master"                : {
+                    nextStages = ['Master']
+                },
+                "_default"              : {
+                    nextStages = ["NotImplemented"]
+                    pr = "BuildPR"
                 }
-            }
+        ]
+
+        mainAgent = {
+            dockerFile = "ci/DockerFile"
+            additionalFilesForDocker = [
+                    "gradle/wrapper/gradle-wrapper.properties"
+            ]
+            memory = 8192
+            cpu = 4096
         }
-        stage('Publish SDK artifacts') {
-            when {
-                expression {
-                    params.Publish
-                }
-            }
-            steps {
-                sh "./gradlew --stacktrace artifactoryPublish --debug"
-            }
-        }
+
+        sharedConfig = [
+                githubTokenId: 'glovo-robot-github-token-for-releases'
+        ]
     }
 }
