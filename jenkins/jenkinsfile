@@ -8,10 +8,10 @@ withAuth.secretText("ARTIFACTORY_PASSWORD") { password ->
         gitCredentialsId = "GlovoRobotTokenPRs"
         stages = [
                 Master         : {
-                    stage = "ci/master/stage.groovy"
+                    stage = "jenkins/master/stage.groovy"
                 },
                 BuildPR       : {
-                    stage = "ci/pr/stage.groovy"
+                    stage = "jenkins/pr/stage.groovy"
                 }
         ]
 
@@ -26,7 +26,7 @@ withAuth.secretText("ARTIFACTORY_PASSWORD") { password ->
         ]
 
         mainAgent = {
-            dockerFile = "ci/DockerFile"
+            dockerFile = "jenkins/DockerFile"
             additionalFilesForDocker = [
                     "gradle/wrapper/gradle-wrapper.properties"
             ]
