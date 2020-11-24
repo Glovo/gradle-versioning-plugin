@@ -14,8 +14,11 @@ def call(pipelineParams, stageConfig, stageParams, input) {
                 sh "./gradlew --stacktrace clean build"
             }
         }
-        stage('Publish SDK artifacts') {
-            sh "./gradlew --stacktrace artifactoryPublish --debug"
+        def shouldPublish = (pipelineParams.jobParams.parametersCurrentValues.Publish == 'Yes')
+        if(shouldPublish) {
+            stage('Publish SDK artifacts') {
+                sh "./gradlew --stacktrace artifactoryPublish --debug"
+            }
         }
         
     }
