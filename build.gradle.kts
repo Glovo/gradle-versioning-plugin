@@ -5,8 +5,8 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4.15.2"
+        classpath("org.jfrog.buildinfo:build-info-extractor-gradle:4.15.2")
     }
 }
 
-apply from: "gradle/publish.gradle"
+apply(from = "gradle/publish.gradle")
