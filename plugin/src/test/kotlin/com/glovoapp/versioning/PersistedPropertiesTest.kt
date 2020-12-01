@@ -1,27 +1,27 @@
 package com.glovoapp.versioning
 
-import org.junit.Assert.*
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.io.FileNotFoundException
 
 class PersistedPropertiesTest {
 
-    @get:Rule
-    val temp = TemporaryFolder()
+    @TempDir
+    lateinit var tmpDir: File
 
     private val propertiesFile by lazy {
-        File(temp.root, "test.properties").apply {
+        File(tmpDir, "test.properties").apply {
             writeText("one=1")
         }
     }
 
     private val properties by lazy { PersistedProperties(propertiesFile) }
 
-    @Test(expected = FileNotFoundException::class)
-    fun throwsWhenFileNotFoundAsSoonPropertiesAccessed() {
+    @Test
+    fun throwsWhenFileNotFoundAsSoonPropertiesAccessed() = assertThrows<FileNotFoundException> {
         propertiesFile.delete()
 
         properties["foo"]

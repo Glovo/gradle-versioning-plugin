@@ -18,7 +18,7 @@ class PersistedVersion<Type : Any>(
     private val onChangeListeners : MutableList<(Type) -> Unit> = LinkedList()
 
     var value: Type
-        get() = properties.getProperty(key).let(parser)
+        get() = checkNotNull(properties.getProperty(key)) { "Missing property: $key in ${properties.file}" }.let(parser)
         set(value) {
             properties.setProperty(key, value.toRaw())
         }

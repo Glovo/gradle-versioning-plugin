@@ -1,20 +1,18 @@
 package com.glovoapp.versioning
 
-import org.junit.Assert
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 class PersistedVersionTest {
 
-    @get:Rule
-    val temp = TemporaryFolder()
+    @TempDir
+    lateinit var tmpDir: File
 
     private val propertiesFile by lazy {
-        File(temp.root, "test.properties").apply {
+        File(tmpDir, "test.properties").apply {
             writeText("version=10")
         }
     }

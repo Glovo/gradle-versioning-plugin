@@ -1,10 +1,10 @@
 package com.glovoapp.versioning
 
 import java.io.File
-import java.util.Properties
+import java.util.*
 
 class PersistedProperties(
-        private val file: File
+    val file: File
 ) : Properties() {
 
     init {

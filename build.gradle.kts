@@ -12,11 +12,15 @@ allprojects {
     }
 
     plugins.withType<PublishingPlugin> {
-        configure<PublishingExtension>  {
+        configure<PublishingExtension> {
             repositories {
                 maven("${rootProject.buildDir}/repo") { name = "local" }
             }
         }
     }
 
+}
+
+task<Delete>("clean") {
+    delete(buildDir)
 }
