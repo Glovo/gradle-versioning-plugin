@@ -1,5 +1,7 @@
 package com.glovoapp.versioning;
 
+import java.lang.IllegalArgumentException
+
 data class SemanticVersion(val major: Int, val minor: Int, val patch: Int) {
 
     enum class Increment { MAJOR, MINOR, PATCH }
@@ -8,7 +10,9 @@ data class SemanticVersion(val major: Int, val minor: Int, val patch: Int) {
         private val VERSION_PATTERN = "(\\d+)\\.(\\d+)\\.(\\d+)".toRegex()
 
         fun parse(source: String) = with(VERSION_PATTERN.matchEntire(source)) {
-            checkNotNull(this) { "Unsupported format for semantic version: $source" }
+            if (this == null) {
+                throw  IllegalArgumentException("Unsupported format for semantic version: $source")
+            }
 
             SemanticVersion(
                     major = groupValues[1].toInt(),
