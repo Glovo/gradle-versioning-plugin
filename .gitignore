@@ -1,31 +1,4 @@
-# Gradle
+.idea/
 .gradle/
-
-# Build output
-/build/
-/out/
-/plugin/core/build/
-/plugin/core/out/
-/plugin/kotlin-extensions/build/
-/plugin/kotlin-extensions/out/
-/plugin/functional-tests/build/
-/plugin/functional-tests/out/
-
-# IntelliJ/Android Studio
+build/
 *.iml
-.idea/caches
-.idea/dictionaries
-.idea/encodings.xml
-.idea/misc.xml
-.idea/modules
-.idea/modules.xml
-.idea/runConfigurations.xml
-.idea/uiDesigner.xml
-.idea/vcs.xml
-.idea/**/libraries
-.idea/**/gradle.xml
-.idea/**/workspace.xml
-local.properties
-
-.idea/compiler.xml
-.idea/jarRepositories.xml
