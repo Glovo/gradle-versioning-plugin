@@ -1,12 +1,22 @@
-buildscript {
+plugins {
+    id("com.glovoapp.artifactory") version "0.1.9"
+}
+
+allprojects {
+    group = "com.glovoapp.gradle"
+    version = "0.0.2"
+
     repositories {
         google()
         mavenCentral()
-        gradlePluginPortal()
     }
-    dependencies {
-        classpath("org.jfrog.buildinfo:build-info-extractor-gradle:4.15.2")
-    }
-}
 
-apply(from = "gradle/publish.gradle")
+    plugins.withType<PublishingPlugin> {
+        configure<PublishingExtension>  {
+            repositories {
+                maven("${rootProject.buildDir}/repo") { name = "local" }
+            }
+        }
+    }
+
+}
