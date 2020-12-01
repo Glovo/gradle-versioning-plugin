@@ -1,15 +1,17 @@
 package com.glovoapp.versioning
 
-import org.junit.Assert.*
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class SemanticVersionTest {
 
-    @Test(expected = IllegalArgumentException::class)
-    fun throwsWhenParsingWrongFormat() {
+    @Test
+    fun throwsWhenParsingWrongFormat() = assertThrows<IllegalArgumentException> {
         SemanticVersion.parse("x.y.z")
 
-            fail("Exception expected but not thrown")
+        fail("Exception expected but not thrown")
     }
 
     @Test

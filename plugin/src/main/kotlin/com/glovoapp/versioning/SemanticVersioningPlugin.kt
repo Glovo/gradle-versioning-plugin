@@ -1,7 +1,7 @@
 package com.glovoapp.versioning
 
-import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.BasePlugin
 import com.glovoapp.versioning.tasks.IncrementSemanticVersionTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -27,6 +27,7 @@ class SemanticVersioningPlugin : Plugin<Project> {
         val incrementVersionTask = tasks.register<IncrementSemanticVersionTask>("incrementSemanticVersion") {
             group = GROUP
             description = "Increments the project's semantic version by 1"
+            version = semanticVersion
         }
 
         plugins.withType<BasePlugin> {
