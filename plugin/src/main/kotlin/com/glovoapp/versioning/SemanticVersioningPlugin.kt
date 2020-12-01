@@ -1,10 +1,8 @@
-package com.glovoapp.gradle
+package com.glovoapp.versioning
 
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.internal.tasks.factory.dependsOn
-import com.glovoapp.gradle.tasks.IncrementNumericVersionTask
-import com.glovoapp.gradle.tasks.IncrementSemanticVersionTask
+import com.glovoapp.versioning.tasks.IncrementSemanticVersionTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
