@@ -8,7 +8,7 @@ allprojects {
 
     repositories {
         google()
-        mavenCentral()
+        jcenter()
     }
 
     plugins.withType<PublishingPlugin> {
