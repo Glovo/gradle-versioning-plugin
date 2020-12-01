@@ -8,6 +8,8 @@ plugins {
     groovy
 }
 
+base.archivesBaseName = "android-version-plugin-kotlin"
+
 dependencies {
     implementation (gradleApi())
     implementation (project(":plugin:core"))

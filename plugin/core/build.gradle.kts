@@ -8,6 +8,8 @@ plugins {
     groovy
 }
 
+base.archivesBaseName = "android-version-plugin"
+
 dependencies {
     implementation(gradleApi())
     compileOnly("com.android.tools.build:gradle:4.0.1")
