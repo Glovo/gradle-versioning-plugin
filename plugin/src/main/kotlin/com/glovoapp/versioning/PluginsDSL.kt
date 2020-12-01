@@ -1,4 +1,4 @@
-package com.glovoapp.gradle
+package com.glovoapp.versioning
 
 import org.gradle.plugin.use.PluginDependenciesSpec
 

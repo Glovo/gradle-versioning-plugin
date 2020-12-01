@@ -1,9 +1,9 @@
-package com.glovoapp.gradle
+package com.glovoapp.versioning
 
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.BaseExtension
-import com.glovoapp.gradle.SemanticVersioningPlugin.Companion.GROUP
-import com.glovoapp.gradle.tasks.IncrementNumericVersionTask
+import com.glovoapp.versioning.SemanticVersioningPlugin.Companion.GROUP
+import com.glovoapp.versioning.tasks.IncrementNumericVersionTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*

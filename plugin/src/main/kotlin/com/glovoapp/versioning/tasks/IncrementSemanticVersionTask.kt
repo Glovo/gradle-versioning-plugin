@@ -1,12 +1,10 @@
-package com.glovoapp.gradle.tasks
+package com.glovoapp.versioning.tasks
 
-import com.glovoapp.gradle.PersistedVersion
-import com.glovoapp.gradle.SemanticVersion
+import com.glovoapp.versioning.PersistedVersion
+import com.glovoapp.versioning.SemanticVersion
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.*
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.options.Option
-import java.util.*
 
 open class IncrementSemanticVersionTask : DefaultTask() {
 

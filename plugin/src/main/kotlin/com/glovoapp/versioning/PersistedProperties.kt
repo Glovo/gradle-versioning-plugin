@@ -1,12 +1,7 @@
-package com.glovoapp.gradle
+package com.glovoapp.versioning
 
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Internal
 import java.io.File
 import java.util.Properties
-import java.io.FileInputStream
-import java.io.FileOutputStream
 
 class PersistedProperties(
         private val file: File
