@@ -9,11 +9,7 @@ def call(pipelineParams, stageConfig, stageParams, input) {
                 junit "**/build/test-results/**/*.xml"
             }
         }
-        stage('Build Demos') {
-            dir('demo/android') {
-                sh "./gradlew --stacktrace clean build"
-            }
-        }
+
         def shouldPublish = (pipelineParams.jobParams.parametersCurrentValues.Publish == 'Yes')
         if(shouldPublish) {
             stage('Publish SDK artifacts') {
