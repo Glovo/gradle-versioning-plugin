@@ -1,10 +1,10 @@
 plugins {
     id("com.glovoapp.artifactory") version "0.1.9"
+    id("com.glovoapp.semantic-versioning") version "0.1.0"
 }
 
 allprojects {
     group = "com.glovoapp.gradle"
-    version = "0.1.0"
 
     repositories {
         google()
