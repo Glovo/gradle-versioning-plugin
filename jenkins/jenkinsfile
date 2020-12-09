@@ -9,14 +9,6 @@ withAuth.secretText("ARTIFACTORY_PASSWORD") { password ->
         stages = [
                 Master         : {
                     stage = "jenkins/master/stage.groovy"
-                    params = [
-                            Publish: {
-                                description: "Should the artifact be published ?"
-                                choices = [
-                                        "_default": ['No', 'Yes']
-                                ]
-                            }
-                    ]
                 },
                 BuildPR       : {
                     stage = "jenkins/pr/stage.groovy"
