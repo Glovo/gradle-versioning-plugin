@@ -1,7 +1,7 @@
 def call(pipelineParams, stageConfig, stageParams, input) {
     withAgent(pipelineParams.mainAgent) {
 
-        sh './gradlew incrementVersion --patch'
+        sh './gradlew incrementSemanticVersion --patch'
         def String version = getVersion()
 
         stage('Bump Version') {
