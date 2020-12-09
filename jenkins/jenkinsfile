@@ -1,4 +1,4 @@
-library 'glovo-jenkins-pipelines@v4.0.0'
+library 'glovo-jenkins-pipelines@v4.1.0'
 
 withAuth.secretText("ARTIFACTORY_PASSWORD") { password ->
     env.ORG_GRADLE_PROJECT_artifactory_user = 'jenkins'
