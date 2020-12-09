@@ -7,8 +7,11 @@ class PersistedProperties(
     val file: File
 ) : Properties() {
 
+    private var initialized = false
+
     init {
         file.reader().use(::load)
+        initialized = true
     }
 
     override fun put(key: Any?, value: Any?) =
@@ -24,7 +27,9 @@ class PersistedProperties(
             super.clear().also { flush() }
 
     fun flush()  {
-        file.writer().use { store(it, null) }
+        if (initialized) {
+            file.writer().use { store(it, null) }
+        }
     }
 
 }
