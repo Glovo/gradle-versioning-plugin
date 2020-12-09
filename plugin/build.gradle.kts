@@ -1,6 +1,5 @@
 plugins {
     `kotlin-dsl`
-    id("com.glovoapp.semantic-versioning") version "0.1.0"
 }
 
 gradlePlugin {
