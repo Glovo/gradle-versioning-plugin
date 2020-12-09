@@ -12,10 +12,14 @@ class PersistedPropertiesTest {
     @TempDir
     lateinit var tmpDir: File
 
+    private var initializedAt = 0L
+
     private val propertiesFile by lazy {
-        File(tmpDir, "test.properties").apply {
+        val file = File(tmpDir, "test.properties").apply {
             writeText("one=1")
         }
+        initializedAt = file.lastModified()
+        return@lazy file
     }
 
     private val properties by lazy { PersistedProperties(propertiesFile) }
@@ -29,8 +33,9 @@ class PersistedPropertiesTest {
     }
 
     @Test
-    fun returnsValueForSpecifiedKey() {
+    fun returnsValueForSpecifiedKeyWithoutModifyingFile() {
         assertEquals("1", properties["one"])
+        assertEquals(initializedAt, propertiesFile.lastModified())
     }
 
     @Test
