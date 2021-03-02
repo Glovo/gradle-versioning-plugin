@@ -8,9 +8,13 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 
-sealed class SemanticVersioningPluginTest(
-    @JvmField @RegisterExtension val gradle: GradleBuildExtension
-) {
+class SemanticVersioningPluginTest() {
+
+    @JvmField
+    @RegisterExtension
+    val gradle = GradleBuildExtension {
+        buildFile("java", "com.glovoapp.semantic-versioning")
+    }
 
     @ParameterizedTest
     @EnumSource(SemanticVersion.Increment::class)
@@ -35,19 +39,5 @@ sealed class SemanticVersioningPluginTest(
     @Test
     fun incrementSemanticVersion_default() =
         incrementSemanticVersion(null)
-
-    class JavaProject : SemanticVersioningPluginTest(GradleBuildExtension {
-        buildFile("java", "com.glovoapp.semantic-versioning")
-    })
-
-    class AndroidProject : SemanticVersioningPluginTest(GradleBuildExtension {
-        buildFile("com.android.application", "com.glovoapp.semantic-versioning") {
-            """
-            android {
-                compileSdkVersion(28)
-            }
-            """.trimIndent()
-        }
-    })
 
 }
