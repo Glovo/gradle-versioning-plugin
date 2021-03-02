@@ -23,15 +23,30 @@ class GradleBuildExtension @JvmOverloads constructor(
             .withProjectDir(root)
     }
 
-    val buildFile
-        get() = File(root, "build.gradle.kts")
+    val buildFile by lazy { File(root, "build.gradle.kts") }
 
-    val versionFile
-        get() = File(root, "version.properties")
+    val versionFile by lazy {
+        File(root, "version.properties")
+            .apply {
+                writeText(
+                    """
+                    version=0.0.1
+                    versionCode=10
+                    """.trimIndent()
+                )
+            }
+    }
 
     override fun beforeEach(context: ExtensionContext?) {
-        File(GradleBuildExtension::class.java.getResource("/testProject").file)
-            .copyRecursively(root, overwrite = true)
+        root.mkdirs()
+        File(root, "settings.gradle.kts").createNewFile()
+
+        versionFile.writeText(
+            """
+            version=0.0.1
+            versionCode=10
+            """.trimIndent()
+        )
 
         setup?.invoke(this)
     }

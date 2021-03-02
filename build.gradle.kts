@@ -13,6 +13,12 @@ allprojects {
         jcenter()
     }
 
+    tasks.withType<Test> {
+        systemProperty("tests.tmp.dir", temporaryDir)
+
+        useJUnitPlatform()
+    }
+
     plugins.withType<PublishingPlugin> {
         configure<PublishingExtension> {
             repositories {
