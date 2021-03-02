@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import java.io.File
 
 class AndroidVersioningPluginTest {
 
@@ -17,6 +18,11 @@ class AndroidVersioningPluginTest {
                 compileSdkVersion(28)
             }
             """.trimIndent()
+        }
+
+        File(root, "src/main/AndroidManifest.xml").apply {
+            parentFile.mkdirs()
+            writeText("<manifest package=\"test.app\"/>")
         }
     }
 
