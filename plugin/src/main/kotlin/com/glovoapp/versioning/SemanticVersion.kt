@@ -1,13 +1,22 @@
 package com.glovoapp.versioning;
 
-import java.lang.IllegalArgumentException
-
-data class SemanticVersion(val major: Int, val minor: Int, val patch: Int) {
+data class SemanticVersion(
+    val major: Int,
+    val minor: Int,
+    val patch: Int,
+    val preRelease: String? = null,
+    val build: String? = null
+) : Comparable<SemanticVersion> {
 
     enum class Increment { MAJOR, MINOR, PATCH }
 
     companion object {
-        private val VERSION_PATTERN = "(\\d+)\\.(\\d+)\\.(\\d+)".toRegex()
+
+        // https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
+        private val VERSION_PATTERN =
+            "(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?".toRegex(
+                RegexOption.IGNORE_CASE
+            )
 
         fun parse(source: String) = with(VERSION_PATTERN.matchEntire(source)) {
             if (this == null) {
@@ -15,12 +24,21 @@ data class SemanticVersion(val major: Int, val minor: Int, val patch: Int) {
             }
 
             SemanticVersion(
-                    major = groupValues[1].toInt(),
-                    minor = groupValues[2].toInt(),
-                    patch = groupValues[3].toInt())
+                major = groupValues[1].toInt(),
+                minor = groupValues[2].toInt(),
+                patch = groupValues[3].toInt(),
+                preRelease = groupValues[4].takeIf { it.isNotBlank() },
+                build = groupValues[5].takeIf { it.isNotBlank() }
+            )
         }
 
+        fun String.toVersion() = parse(this)
+
     }
+
+    val preReleaseIdentifiers by lazy { preRelease?.split('.') ?: emptyList() }
+
+    val buildIdentifiers by lazy { build?.split('.') ?: emptyList() }
 
     operator fun plus(increment: Increment) = when (increment) {
         Increment.MAJOR -> copy(major = major + 1, minor = 0, patch = 0)
@@ -28,6 +46,38 @@ data class SemanticVersion(val major: Int, val minor: Int, val patch: Int) {
         Increment.PATCH -> copy(patch = patch + 1)
     }
 
-    override fun toString() = "$major.$minor.$patch"
+    // https://semver.org/#spec-item-11
+    override fun compareTo(other: SemanticVersion) = when {
+        major != other.major -> major.compareTo(other.major)
+        minor != other.minor -> minor.compareTo(other.minor)
+        patch != other.patch -> patch.compareTo(other.patch)
+        preRelease == null -> if (other.preRelease == null) 0 else 1
+        other.preRelease == null -> -1
+        else -> preReleaseIdentifiers.compareTo(other.preReleaseIdentifiers)
+    }
+
+    private tailrec fun List<String>.compareTo(other: List<String>, index: Int = 0): Int = when {
+        index >= size -> if (index >= other.size) 0 else -1
+        index >= other.size -> 1
+        else -> {
+            val thisValue = this[index]
+            val otherValue = other[index]
+            val thisNumber = thisValue.toIntOrNull()
+            val otherNumber = otherValue.toIntOrNull()
+
+            val compare = when {
+                thisNumber == null -> if (otherNumber != null) 1 else thisValue.compareTo(otherValue)
+                otherNumber == null -> -1
+                else -> thisNumber.compareTo(otherNumber)
+            }
+
+            if (compare != 0) compare else compareTo(other, index + 1)
+        }
+    }
+
+    private fun String?.prefix(prefix: String) =
+        if (isNullOrBlank()) "" else prefix + this
+
+    override fun toString() = "$major.$minor.$patch${preRelease.prefix("-")}${build.prefix("+")}"
 
 }
