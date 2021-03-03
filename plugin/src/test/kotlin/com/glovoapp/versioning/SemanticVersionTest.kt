@@ -1,62 +1,159 @@
 package com.glovoapp.versioning
 
+import com.glovoapp.versioning.SemanticVersion.Companion.toVersion
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments.arguments
+import org.junit.jupiter.params.provider.MethodSource
+import java.util.stream.Stream
 
 class SemanticVersionTest {
 
     @Test
-    fun throwsWhenParsingWrongFormat() = assertThrows<IllegalArgumentException> {
-        SemanticVersion.parse("x.y.z")
-
-        fail("Exception expected but not thrown")
+    fun `parse, throws an error if can't parse`() {
+        assertThrows<IllegalArgumentException> {
+            SemanticVersion.parse("x.y.z")
+        }
     }
 
-    @Test
-    fun parsesCorrectFormat() {
-        val version = SemanticVersion.parse("1.2.3")
+    @ParameterizedTest
+    @MethodSource("versions")
+    fun `parse, returns a version`(source: String, expected: SemanticVersion) {
+        val version = source.toVersion()
 
-        assertEquals(1, version.major)
-        assertEquals(2, version.minor)
-        assertEquals(3, version.patch)
+        assertEquals(expected, version)
     }
 
-    @Test
-    fun printsUsingCorrectFormat() {
-        val text = "1.2.3"
+    @ParameterizedTest
+    @MethodSource("versions")
+    fun `toString, returns raw version string`(expected: String, version: SemanticVersion) {
+        val actual = version.toString()
 
-        val version = SemanticVersion.parse(text)
-
-        assertEquals(text, version.toString())
+        assertEquals(expected, actual)
     }
 
-    @Test
-    fun incrementsMajorCorrectly() {
-        val version = SemanticVersion.parse("1.2.3")
+    @ParameterizedTest
+    @MethodSource("versions")
+    fun `preReleaseIdentifiers, parses the preRelease value`(unused: String, version: SemanticVersion) {
+        val expected = version.preRelease?.split('.') ?: emptyList()
 
-        val newVersion = version + SemanticVersion.Increment.MAJOR
-
-        assertEquals("2.0.0", newVersion.toString())
+        assertEquals(expected, version.preReleaseIdentifiers)
     }
 
-    @Test
-    fun incrementsMinorCorrectly() {
-        val version = SemanticVersion.parse("1.2.3")
+    @ParameterizedTest
+    @MethodSource("versions")
+    fun `buildIdentifiers, parses the build value`(unused: String, version: SemanticVersion) {
+        val expected = version.build?.split('.') ?: emptyList()
 
-        val newVersion = version + SemanticVersion.Increment.MINOR
-
-        assertEquals("1.3.0", newVersion.toString())
+        assertEquals(expected, version.buildIdentifiers)
     }
 
-    @Test
-    fun incrementsPatchCorrectly() {
-        val version = SemanticVersion.parse("1.2.3")
+    @ParameterizedTest
+    @MethodSource("increments")
+    fun `plus, returns the incremented version`(version: SemanticVersion, increment: SemanticVersion.Increment) {
+        val expected = when (increment) {
+            SemanticVersion.Increment.MAJOR -> version.copy(major = version.major + 1, minor = 0, patch = 0)
+            SemanticVersion.Increment.MINOR -> version.copy(minor = version.minor + 1, patch = 0)
+            SemanticVersion.Increment.PATCH -> version.copy(patch = version.patch + 1)
+        }
+        val actual = version + increment
 
-        val newVersion = version + SemanticVersion.Increment.PATCH
+        assertEquals(expected, actual)
+    }
 
-        assertEquals("1.2.4", newVersion.toString())
+    @ParameterizedTest
+    @MethodSource("versionsForCompare")
+    fun `compare, returns if older or newer than other`(expected: List<SemanticVersion>) {
+        // in case of any error, the list will be not in the original order
+        val actual = expected.shuffled().sorted()
+
+        assertEquals(expected, actual)
+    }
+
+    companion object {
+
+        @JvmStatic
+        fun versions() = Stream.of(
+            arguments("0.0.4", SemanticVersion(0, 0, 4)),
+            arguments("1.2.3", SemanticVersion(1, 2, 3)),
+            arguments("10.20.30", SemanticVersion(10, 20, 30)),
+            arguments("1.1.2-prerelease+meta", SemanticVersion(1, 1, 2, "prerelease", "meta")),
+            arguments("1.1.2+meta", SemanticVersion(1, 1, 2, null, "meta")),
+            arguments("1.1.2+meta-valid", SemanticVersion(1, 1, 2, null, "meta-valid")),
+            arguments("1.0.0-alpha", SemanticVersion(1, 0, 0, "alpha")),
+            arguments("1.0.0-beta", SemanticVersion(1, 0, 0, "beta")),
+            arguments("1.0.0-alpha.beta", SemanticVersion(1, 0, 0, "alpha.beta")),
+            arguments("1.0.0-alpha.beta.1", SemanticVersion(1, 0, 0, "alpha.beta.1")),
+            arguments("1.0.0-alpha.1", SemanticVersion(1, 0, 0, "alpha.1")),
+            arguments("1.0.0-alpha0.valid", SemanticVersion(1, 0, 0, "alpha0.valid")),
+            arguments("1.0.0-alpha.0valid", SemanticVersion(1, 0, 0, "alpha.0valid")),
+            arguments(
+                "1.0.0-alpha-a.b-c-somethinglong+build.1-aef.1-its-okay",
+                SemanticVersion(1, 0, 0, "alpha-a.b-c-somethinglong", "build.1-aef.1-its-okay")
+            ),
+            arguments("1.0.0-rc.1+build.1", SemanticVersion(1, 0, 0, "rc.1", "build.1")),
+            arguments("2.0.0-rc.1+build.123", SemanticVersion(2, 0, 0, "rc.1", "build.123")),
+            arguments("1.2.3-beta", SemanticVersion(1, 2, 3, "beta")),
+            arguments("10.2.3-DEV-SNAPSHOT", SemanticVersion(10, 2, 3, "DEV-SNAPSHOT")),
+            arguments("1.2.3-SNAPSHOT-123", SemanticVersion(1, 2, 3, "SNAPSHOT-123")),
+            arguments("1.0.0", SemanticVersion(1, 0, 0)),
+            arguments("2.0.0", SemanticVersion(2, 0, 0)),
+            arguments("1.1.7", SemanticVersion(1, 1, 7)),
+            arguments("2.0.0+build.1848", SemanticVersion(2, 0, 0, null, "build.1848")),
+            arguments("2.0.1-alpha.1227", SemanticVersion(2, 0, 1, "alpha.1227")),
+            arguments("1.0.0-alpha+beta", SemanticVersion(1, 0, 0, "alpha", "beta")),
+            arguments(
+                "1.2.3----RC-SNAPSHOT.12.9.1--.12+788",
+                SemanticVersion(1, 2, 3, "---RC-SNAPSHOT.12.9.1--.12", "788")
+            ),
+            arguments("1.2.3----R-S.12.9.1--.12+meta", SemanticVersion(1, 2, 3, "---R-S.12.9.1--.12", "meta")),
+            arguments("1.2.3----RC-SNAPSHOT.12.9.1--.12", SemanticVersion(1, 2, 3, "---RC-SNAPSHOT.12.9.1--.12")),
+            arguments(
+                "1.0.0+0.build.1-rc.10000aaa-kk-0.1",
+                SemanticVersion(1, 0, 0, null, "0.build.1-rc.10000aaa-kk-0.1")
+            ),
+            arguments("1.0.0-0A.is.legal", SemanticVersion(1, 0, 0, "0A.is.legal"))
+        )
+
+        @JvmStatic
+        fun increments() = versions().map { it.get()[1] }.flatMap { version ->
+            SemanticVersion.Increment.values().map { increment ->
+                arguments(version, increment)
+            }.stream()
+        }
+
+        @JvmStatic
+        fun versionsForCompare() = Stream.of(
+            arguments(
+                listOf(
+                    SemanticVersion(1, 0, 0),
+                    SemanticVersion(2, 0, 0),
+                    SemanticVersion(2, 1, 0),
+                    SemanticVersion(2, 1, 1)
+                )
+            ),
+            arguments(
+                listOf(
+                    SemanticVersion(1, 0, 0, "alpha"),
+                    SemanticVersion(1, 0, 0)
+                )
+            ),
+            arguments(
+                listOf(
+                    SemanticVersion(1, 0, 0, "alpha"),
+                    SemanticVersion(1, 0, 0, "alpha.1"),
+                    SemanticVersion(1, 0, 0, "alpha.beta"),
+                    SemanticVersion(1, 0, 0, "beta"),
+                    SemanticVersion(1, 0, 0, "beta.2"),
+                    SemanticVersion(1, 0, 0, "beta.11"),
+                    SemanticVersion(1, 0, 0, "rc.1"),
+                    SemanticVersion(1, 0, 0)
+                )
+            )
+        )
+
     }
 
 }
