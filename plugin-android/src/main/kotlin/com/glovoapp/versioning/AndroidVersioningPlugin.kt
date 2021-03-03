@@ -6,13 +6,25 @@ import com.glovoapp.versioning.SemanticVersioningPlugin.Companion.GROUP
 import com.glovoapp.versioning.tasks.IncrementNumericVersionTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.initialization.Settings
+import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 
-class AndroidVersioningPlugin : Plugin<Project> {
+class AndroidVersioningPlugin : Plugin<Any> {
 
-    override fun apply(target: Project): Unit = with(target) {
+    override fun apply(target: Any) = when (target) {
+        is Settings -> target.apply()
+        is Project -> target.apply()
+        else -> error("Unsupported target $target")
+    }
+
+    private fun Settings.apply() {
+        gradle.allprojects { apply<AndroidVersioningPlugin>() }
+    }
+
+    private fun Project.apply() {
         val persistedProperties = plugins.apply(SemanticVersioningPlugin::class.java).persistedProperties
 
         plugins.withType<BasePlugin> {
