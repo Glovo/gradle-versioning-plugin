@@ -23,23 +23,23 @@ class SemanticVersioningPlugin : Plugin<Any> {
     }
 
     private fun Settings.apply() {
-        gradle.allprojects { apply<SemanticVersioningPlugin>() }
+        gradle.rootProject { apply<SemanticVersioningPlugin>() }
     }
 
     private fun Project.apply() {
-        persistedProperties = when (this) {
-            rootProject -> PersistedProperties(file("$rootDir/version.properties"))
-            else -> rootProject.plugins.apply(SemanticVersioningPlugin::class.java).persistedProperties
+        if (this != rootProject) {
+            logger.warn("${this::class.java} should be applied from root project")
+            rootProject.apply<SemanticVersioningPlugin>()
+            return
         }
 
+        persistedProperties = PersistedProperties(file("version.properties"))
+
         val semanticVersion = persistedProperties.semanticVersion(key = "version")
+        allprojects { version = semanticVersion }
 
-        version = semanticVersion
-
-        when (this) {
-            rootProject -> tasks.register<IncrementSemanticVersionTask>(TASK_NAME) { version = semanticVersion }
-            else -> tasks.register(TASK_NAME) { dependsOn(rootProject.tasks.named(TASK_NAME)) }
-        }.configure {
+        tasks.register<IncrementSemanticVersionTask>(TASK_NAME) {
+            version = semanticVersion
             group = GROUP
             description = "Increments the project's semantic version by 1"
         }
