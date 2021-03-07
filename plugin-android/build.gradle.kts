@@ -2,6 +2,8 @@ plugins {
     `kotlin-dsl`
 }
 
+base.archivesBaseName = "gradle-android-versioning-plugin"
+
 gradlePlugin {
     plugins {
         create("android-versioning") {
@@ -12,8 +14,8 @@ gradlePlugin {
 }
 
 dependencies {
-    implementation(project(":versioning"))
-    implementation("com.android.tools.build:gradle:4.1.1")
+    api(project(":plugin"))
+    api("com.android.tools.build:gradle:4.1.1")
 
-    testImplementation(testFixtures(project(":versioning")))
+    testImplementation(testFixtures(project(":plugin")))
 }

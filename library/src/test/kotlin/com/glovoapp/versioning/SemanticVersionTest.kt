@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments.arguments
+import org.junit.jupiter.params.provider.Arguments.of
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
 
@@ -76,57 +76,57 @@ class SemanticVersionTest {
 
         @JvmStatic
         fun versions() = Stream.of(
-            arguments("0.0.4", SemanticVersion(0, 0, 4)),
-            arguments("1.2.3", SemanticVersion(1, 2, 3)),
-            arguments("10.20.30", SemanticVersion(10, 20, 30)),
-            arguments("1.1.2-prerelease+meta", SemanticVersion(1, 1, 2, "prerelease", "meta")),
-            arguments("1.1.2+meta", SemanticVersion(1, 1, 2, null, "meta")),
-            arguments("1.1.2+meta-valid", SemanticVersion(1, 1, 2, null, "meta-valid")),
-            arguments("1.0.0-alpha", SemanticVersion(1, 0, 0, "alpha")),
-            arguments("1.0.0-beta", SemanticVersion(1, 0, 0, "beta")),
-            arguments("1.0.0-alpha.beta", SemanticVersion(1, 0, 0, "alpha.beta")),
-            arguments("1.0.0-alpha.beta.1", SemanticVersion(1, 0, 0, "alpha.beta.1")),
-            arguments("1.0.0-alpha.1", SemanticVersion(1, 0, 0, "alpha.1")),
-            arguments("1.0.0-alpha0.valid", SemanticVersion(1, 0, 0, "alpha0.valid")),
-            arguments("1.0.0-alpha.0valid", SemanticVersion(1, 0, 0, "alpha.0valid")),
-            arguments(
+            of("0.0.4", SemanticVersion(0, 0, 4)),
+            of("1.2.3", SemanticVersion(1, 2, 3)),
+            of("10.20.30", SemanticVersion(10, 20, 30)),
+            of("1.1.2-prerelease+meta", SemanticVersion(1, 1, 2, "prerelease", "meta")),
+            of("1.1.2+meta", SemanticVersion(1, 1, 2, null, "meta")),
+            of("1.1.2+meta-valid", SemanticVersion(1, 1, 2, null, "meta-valid")),
+            of("1.0.0-alpha", SemanticVersion(1, 0, 0, "alpha")),
+            of("1.0.0-beta", SemanticVersion(1, 0, 0, "beta")),
+            of("1.0.0-alpha.beta", SemanticVersion(1, 0, 0, "alpha.beta")),
+            of("1.0.0-alpha.beta.1", SemanticVersion(1, 0, 0, "alpha.beta.1")),
+            of("1.0.0-alpha.1", SemanticVersion(1, 0, 0, "alpha.1")),
+            of("1.0.0-alpha0.valid", SemanticVersion(1, 0, 0, "alpha0.valid")),
+            of("1.0.0-alpha.0valid", SemanticVersion(1, 0, 0, "alpha.0valid")),
+            of(
                 "1.0.0-alpha-a.b-c-somethinglong+build.1-aef.1-its-okay",
                 SemanticVersion(1, 0, 0, "alpha-a.b-c-somethinglong", "build.1-aef.1-its-okay")
             ),
-            arguments("1.0.0-rc.1+build.1", SemanticVersion(1, 0, 0, "rc.1", "build.1")),
-            arguments("2.0.0-rc.1+build.123", SemanticVersion(2, 0, 0, "rc.1", "build.123")),
-            arguments("1.2.3-beta", SemanticVersion(1, 2, 3, "beta")),
-            arguments("10.2.3-DEV-SNAPSHOT", SemanticVersion(10, 2, 3, "DEV-SNAPSHOT")),
-            arguments("1.2.3-SNAPSHOT-123", SemanticVersion(1, 2, 3, "SNAPSHOT-123")),
-            arguments("1.0.0", SemanticVersion(1, 0, 0)),
-            arguments("2.0.0", SemanticVersion(2, 0, 0)),
-            arguments("1.1.7", SemanticVersion(1, 1, 7)),
-            arguments("2.0.0+build.1848", SemanticVersion(2, 0, 0, null, "build.1848")),
-            arguments("2.0.1-alpha.1227", SemanticVersion(2, 0, 1, "alpha.1227")),
-            arguments("1.0.0-alpha+beta", SemanticVersion(1, 0, 0, "alpha", "beta")),
-            arguments(
+            of("1.0.0-rc.1+build.1", SemanticVersion(1, 0, 0, "rc.1", "build.1")),
+            of("2.0.0-rc.1+build.123", SemanticVersion(2, 0, 0, "rc.1", "build.123")),
+            of("1.2.3-beta", SemanticVersion(1, 2, 3, "beta")),
+            of("10.2.3-DEV-SNAPSHOT", SemanticVersion(10, 2, 3, "DEV-SNAPSHOT")),
+            of("1.2.3-SNAPSHOT-123", SemanticVersion(1, 2, 3, "SNAPSHOT-123")),
+            of("1.0.0", SemanticVersion(1, 0, 0)),
+            of("2.0.0", SemanticVersion(2, 0, 0)),
+            of("1.1.7", SemanticVersion(1, 1, 7)),
+            of("2.0.0+build.1848", SemanticVersion(2, 0, 0, null, "build.1848")),
+            of("2.0.1-alpha.1227", SemanticVersion(2, 0, 1, "alpha.1227")),
+            of("1.0.0-alpha+beta", SemanticVersion(1, 0, 0, "alpha", "beta")),
+            of(
                 "1.2.3----RC-SNAPSHOT.12.9.1--.12+788",
                 SemanticVersion(1, 2, 3, "---RC-SNAPSHOT.12.9.1--.12", "788")
             ),
-            arguments("1.2.3----R-S.12.9.1--.12+meta", SemanticVersion(1, 2, 3, "---R-S.12.9.1--.12", "meta")),
-            arguments("1.2.3----RC-SNAPSHOT.12.9.1--.12", SemanticVersion(1, 2, 3, "---RC-SNAPSHOT.12.9.1--.12")),
-            arguments(
+            of("1.2.3----R-S.12.9.1--.12+meta", SemanticVersion(1, 2, 3, "---R-S.12.9.1--.12", "meta")),
+            of("1.2.3----RC-SNAPSHOT.12.9.1--.12", SemanticVersion(1, 2, 3, "---RC-SNAPSHOT.12.9.1--.12")),
+            of(
                 "1.0.0+0.build.1-rc.10000aaa-kk-0.1",
                 SemanticVersion(1, 0, 0, null, "0.build.1-rc.10000aaa-kk-0.1")
             ),
-            arguments("1.0.0-0A.is.legal", SemanticVersion(1, 0, 0, "0A.is.legal"))
+            of("1.0.0-0A.is.legal", SemanticVersion(1, 0, 0, "0A.is.legal"))
         )
 
         @JvmStatic
         fun increments() = versions().map { it.get()[1] }.flatMap { version ->
             SemanticVersion.Increment.values().map { increment ->
-                arguments(version, increment)
+                of(version, increment)
             }.stream()
         }
 
         @JvmStatic
         fun versionsForCompare() = Stream.of(
-            arguments(
+            of(
                 listOf(
                     SemanticVersion(1, 0, 0),
                     SemanticVersion(2, 0, 0),
@@ -134,13 +134,13 @@ class SemanticVersionTest {
                     SemanticVersion(2, 1, 1)
                 )
             ),
-            arguments(
+            of(
                 listOf(
                     SemanticVersion(1, 0, 0, "alpha"),
                     SemanticVersion(1, 0, 0)
                 )
             ),
-            arguments(
+            of(
                 listOf(
                     SemanticVersion(1, 0, 0, "alpha"),
                     SemanticVersion(1, 0, 0, "alpha.1"),
