@@ -26,7 +26,7 @@ def call(pipelineParams, stageConfig, stageParams, input) {
         }
 
         stage('Publish SDK artifacts') {
-            sh "./gradlew --stacktrace artifactoryPublish --debug"
+            sh "./gradlew -s artifactoryPublish"
         }
 
         stage('Release to GitHub') {
