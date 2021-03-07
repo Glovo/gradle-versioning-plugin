@@ -3,16 +3,16 @@ package com.glovoapp.versioning
 import java.util.*
 
 fun PersistedProperties.semanticVersion(key: String) =
-        PersistedVersion(this, key = key, parser = SemanticVersion::parse)
+        PersistedVersion(this, key = key, parser = SemanticVersion.Companion::parse)
 
 fun PersistedProperties.numericVersion(key: String) =
         PersistedVersion(this, key = key, parser = String::toInt)
 
 class PersistedVersion<Type : Any>(
-        private val properties: PersistedProperties,
-        private val key: String,
-        private val parser: (String) -> Type,
-        private val toRaw: Type.() -> String = { toString() }
+    private val properties: PersistedProperties,
+    private val key: String,
+    private val parser: (String) -> Type,
+    private val toRaw: Type.() -> String = { toString() }
 ) {
 
     private val onChangeListeners : MutableList<(Type) -> Unit> = LinkedList()

@@ -56,7 +56,6 @@ open class IncrementSemanticVersionTask : DefaultTask() {
         this.amount = checkNotNull(amount.toIntOrNull()?.takeIf { it >= 0 }) { "amount `$amount` must be >= 0" }
     }
 
-    @Input
     @Option(option = "preserve", description = "Add or replace current pre-release and build labels")
     fun preserve() {
         this.preservePreRelease = true

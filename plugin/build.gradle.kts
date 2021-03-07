@@ -3,6 +3,8 @@ plugins {
     `java-test-fixtures`
 }
 
+base.archivesBaseName = "gradle-versioning-plugin"
+
 gradlePlugin {
     plugins {
         create("semantic-versioning") {
@@ -13,13 +15,5 @@ gradlePlugin {
 }
 
 dependencies {
-    testFixturesApi(gradleTestKit())
-    testFixturesApi("org.junit.jupiter:junit-jupiter-params:5.7.0")
-    testFixturesApi("org.junit.jupiter:junit-jupiter-engine:5.7.0")
-}
-
-tasks.withType<Test> {
-    systemProperty("tests.tmp.dir", temporaryDir)
-
-    useJUnitPlatform()
+    api(project(":library"))
 }
