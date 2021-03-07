@@ -8,7 +8,13 @@ data class SemanticVersion(
     val build: String? = null
 ) : Comparable<SemanticVersion> {
 
-    enum class Increment { MAJOR, MINOR, PATCH }
+    enum class Increment {
+
+        MAJOR, MINOR, PATCH;
+
+        operator fun times(amount: Int) = this to amount
+
+    }
 
     companion object {
 
@@ -40,10 +46,12 @@ data class SemanticVersion(
 
     val buildIdentifiers by lazy { build?.split('.') ?: emptyList() }
 
-    operator fun plus(increment: Increment) = when (increment) {
-        Increment.MAJOR -> copy(major = major + 1, minor = 0, patch = 0)
-        Increment.MINOR -> copy(minor = minor + 1, patch = 0)
-        Increment.PATCH -> copy(patch = patch + 1)
+    operator fun plus(increment: Increment) = plus(increment * 1)
+
+    operator fun plus(increment: Pair<Increment, Int>) = when (increment.first) {
+        Increment.MAJOR -> copy(major = major + increment.second, minor = 0, patch = 0)
+        Increment.MINOR -> copy(minor = minor + increment.second, patch = 0)
+        Increment.PATCH -> copy(patch = patch + increment.second)
     }
 
     // https://semver.org/#spec-item-11
