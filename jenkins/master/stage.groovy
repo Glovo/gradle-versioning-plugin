@@ -16,14 +16,8 @@ def call(pipelineParams, stageConfig, stageParams, input) {
             }
         }
 
-        stage('Build plugins') {
-            try {
-                sh "./gradlew --stacktrace clean build"
-            }
-            finally {
-                junit "**/build/test-results/**/*.xml"
-            }
-        }
+        def buildStage = load("jenkins/buildStage.groovy")
+        buildStage(pipelineParams)
 
         stage('Tag version') {
             git.authenticated(pipelineParams.gitCredentialsId) {
