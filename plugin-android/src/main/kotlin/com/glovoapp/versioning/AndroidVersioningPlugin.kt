@@ -1,7 +1,7 @@
 package com.glovoapp.versioning
 
 import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.BasePlugin
+import com.android.build.gradle.api.AndroidBasePlugin
 import com.glovoapp.versioning.SemanticVersioningPlugin.Companion.GROUP
 import com.glovoapp.versioning.tasks.IncrementNumericVersionTask
 import org.gradle.api.Plugin
@@ -27,7 +27,7 @@ class AndroidVersioningPlugin : Plugin<Any> {
     private fun Project.apply() {
         val persistedProperties = plugins.apply(SemanticVersioningPlugin::class.java).persistedProperties
 
-        plugins.withType<BasePlugin> {
+        plugins.withType<AndroidBasePlugin> {
             val numericVersion = persistedProperties.numericVersion(key = "versionCode")
 
             configure<BaseExtension> {
