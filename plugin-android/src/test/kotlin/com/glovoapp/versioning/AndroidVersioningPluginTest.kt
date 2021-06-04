@@ -36,4 +36,14 @@ class AndroidVersioningPluginTest {
         assertTrue("versionCode=15" in versionFile.readLines())
     }
 
+    @Test
+    fun incrementVersionName() = with(gradle) {
+        versionFile("versionName" to "0.1.2")
+
+        val result = runner.withArguments("-s", "incrementVersionName").build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":incrementVersionName")?.outcome)
+        assertTrue("versionName=0.1.3" in versionFile.readLines())
+    }
+
 }
