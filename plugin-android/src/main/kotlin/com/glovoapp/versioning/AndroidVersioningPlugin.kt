@@ -19,7 +19,7 @@ class AndroidVersioningPlugin : Plugin<Project> {
     }
 
     override fun apply(target: Project): Unit = with(target) {
-        val persistedProperties = plugins.apply(SemanticVersioningPlugin::class.java).persistedProperties
+        val persistedProperties = rootProject.plugins.apply(PersistedVersionPlugin::class.java).persistedProperties
 
         plugins.withType<AndroidBasePlugin> {
             val numericVersion = if (KEY_VERSION_CODE in persistedProperties.keys)
