@@ -12,8 +12,13 @@ class AndroidVersioningPluginTest {
     @JvmField
     @RegisterExtension
     val gradle = GradleBuildExtension {
-        buildFile("com.android.application", "com.glovoapp.android-versioning") {
+        buildFile {
             """
+            plugins {
+                id("com.android.application")
+                id("com.glovoapp.android-versioning")
+            }
+            
             android {
                 compileSdkVersion(28)
             }
