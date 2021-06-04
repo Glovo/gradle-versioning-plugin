@@ -9,8 +9,6 @@ import org.gradle.kotlin.dsl.register
 
 class SemanticVersioningPlugin : Plugin<Any> {
 
-    lateinit var persistedProperties: PersistedProperties
-
     companion object {
         const val GROUP = "versioning"
         const val TASK_NAME = "incrementSemanticVersion"
@@ -27,13 +25,7 @@ class SemanticVersioningPlugin : Plugin<Any> {
     }
 
     private fun Project.apply() {
-        if (this != rootProject) {
-            logger.warn("${this::class.java} should be applied from root project")
-            rootProject.apply<SemanticVersioningPlugin>()
-            return
-        }
-
-        persistedProperties = PersistedProperties(file("version.properties"))
+        val persistedProperties = rootProject.plugins.apply(PersistedVersionPlugin::class.java).persistedProperties
 
         val semanticVersion = persistedProperties.semanticVersion(key = "version")
         allprojects { version = semanticVersion }
