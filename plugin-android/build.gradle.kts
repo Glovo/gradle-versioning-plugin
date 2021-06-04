@@ -15,7 +15,8 @@ gradlePlugin {
 
 dependencies {
     api(project(":plugin"))
-    api("com.android.tools.build:gradle:4.1.1")
+
+    implementation("com.android.tools.build:gradle:4.1.1")
 
     testImplementation(testFixtures(project(":plugin")))
 }

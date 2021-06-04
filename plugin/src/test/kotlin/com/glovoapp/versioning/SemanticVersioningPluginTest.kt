@@ -13,7 +13,14 @@ class SemanticVersioningPluginTest() {
     @JvmField
     @RegisterExtension
     val gradle = GradleBuildExtension {
-        buildFile("java", "com.glovoapp.semantic-versioning")
+        buildFile {
+            """
+            plugins {
+                java 
+                id("com.glovoapp.semantic-versioning")
+            }
+            """.trimIndent()
+        }
     }
 
     @ParameterizedTest

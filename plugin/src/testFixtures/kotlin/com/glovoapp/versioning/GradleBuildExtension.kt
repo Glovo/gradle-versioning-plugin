@@ -51,20 +51,8 @@ class GradleBuildExtension @JvmOverloads constructor(
         setup?.invoke(this)
     }
 
-    fun buildFile(vararg plugins: String, content: (() -> String)? = null) {
-        buildFile.writeText(
-            """
-            |plugins {
-            ${plugins.joinToString(separator = "\n") { "|   id(\"$it\")" }}
-            |}
-            |
-            |repositories {
-            |    google()
-            |    jcenter()
-            |}
-            |
-            """.trimMargin() + (content?.invoke() ?: "")
-        )
+    operator fun File.invoke(content: () -> String) {
+        buildFile.writeText(content())
     }
 
     fun versionFile(vararg entries: Pair<String, String>) = with(Properties()) {
