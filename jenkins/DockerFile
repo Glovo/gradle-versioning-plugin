@@ -1,5 +1,5 @@
 # All Android dependencies come from here. Currently SDK 28
-FROM 902311805216.dkr.ecr.eu-west-1.amazonaws.com/jenkins-fargate-agents:jenkins-fargate-base-agents-android-bdce4fa21a3195c1da0a4225723be7b21ca4b36b
+FROM 902311805216.dkr.ecr.eu-west-1.amazonaws.com/jenkins-fargate-agents:jenkins-fargate-base-agents-android-217f0210c06168b96a2219cde8c9bc6250788ab6
 
 USER jenkins
 
