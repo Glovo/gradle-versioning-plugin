@@ -1,6 +1,7 @@
 package com.glovoapp.versioning
 
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.api.AndroidBasePlugin
 import com.glovoapp.versioning.SemanticVersioningPlugin.Companion.GROUP
 import com.glovoapp.versioning.tasks.IncrementNumericVersionTask
 import com.glovoapp.versioning.tasks.IncrementSemanticVersionTask
@@ -17,23 +18,12 @@ class AndroidVersioningPlugin : Plugin<Project> {
     }
 
     override fun apply(target: Project): Unit = with(target) {
-        check(plugins.findPlugin("com.android.application") != null) {
-            "${this::class.java} requires `com.android.application` to be applied first"
-        }
-
         val persistedProperties = rootProject.plugins.apply(PersistedVersionPlugin::class.java).persistedProperties
 
         val numericVersion = if (KEY_VERSION_CODE in persistedProperties.keys)
             persistedProperties.numericVersion(key = KEY_VERSION_CODE) else null
         val semanticVersion = if (KEY_VERSION_NAME in persistedProperties.keys)
             persistedProperties.semanticVersion(key = KEY_VERSION_NAME) else null
-
-        configure<BaseExtension> {
-            defaultConfig {
-                numericVersion?.onChanged { versionCode = it }
-                semanticVersion?.onChanged { versionName = it.toString() }
-            }
-        }
 
         val incrementVersionCodeTask = numericVersion?.let {
             tasks.register<IncrementNumericVersionTask>("incrementVersionCode") {
@@ -51,14 +41,27 @@ class AndroidVersioningPlugin : Plugin<Project> {
             }
         }
 
-        // ensures these task are run (if present in the graph) before any Android build task
-        tasks.named("preBuild") {
-            shouldRunAfter(
-                *listOfNotNull(
-                    incrementVersionCodeTask,
-                    incrementVersionNameTask
-                ).toTypedArray()
-            )
+        afterEvaluate {
+            check(plugins.hasPlugin(AndroidBasePlugin::class.java)) {
+                "${this@AndroidVersioningPlugin::class.java} requires an `android` to be applied"
+            }
+
+            configure<BaseExtension> {
+                defaultConfig {
+                    numericVersion?.onChanged { versionCode = it }
+                    semanticVersion?.onChanged { versionName = it.toString() }
+                }
+            }
+
+            // ensures these task are run (if present in the graph) before any Android build task
+            tasks.named("preBuild") {
+                shouldRunAfter(
+                    *listOfNotNull(
+                        incrementVersionCodeTask,
+                        incrementVersionNameTask
+                    ).toTypedArray()
+                )
+            }
         }
     }
 
