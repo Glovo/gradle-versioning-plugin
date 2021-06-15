@@ -1,39 +1,39 @@
 package com.glovoapp.versioning
 
+import com.glovoapp.gradle.plugin.PLUGIN_ARTIFACT
 import com.glovoapp.versioning.tasks.IncrementSemanticVersionTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.initialization.Settings
 import org.gradle.kotlin.dsl.apply
+import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.register
 
-class SemanticVersioningPlugin : Plugin<Any> {
+class SemanticVersioningPlugin : Plugin<Project> {
 
     companion object {
         const val GROUP = "versioning"
         const val TASK_NAME = "incrementSemanticVersion"
     }
 
-    override fun apply(target: Any) = when (target) {
-        is Settings -> target.apply()
-        is Project -> target.apply()
-        else -> error("Unsupported target $target")
-    }
+    override fun apply(target: Project): Unit = with(target) {
+        if (name == "buildSrc") {
+            apply(plugin = "java")
 
-    private fun Settings.apply() {
-        gradle.rootProject { apply<SemanticVersioningPlugin>() }
-    }
+            dependencies {
+                "implementation"(PLUGIN_ARTIFACT)
+            }
 
-    private fun Project.apply() {
-        val persistedProperties = rootProject.plugins.apply(PersistedVersionPlugin::class.java).persistedProperties
+        } else {
+            val persistedProperties = plugins.apply(PersistedVersionPlugin::class.java).persistedProperties
+            val semanticVersion = persistedProperties.semanticVersion(key = "version")
 
-        val semanticVersion = persistedProperties.semanticVersion(key = "version")
-        allprojects { version = semanticVersion }
+            allprojects { version = semanticVersion }
 
-        tasks.register<IncrementSemanticVersionTask>(TASK_NAME) {
-            version = semanticVersion
-            group = GROUP
-            description = "Increments the project's semantic version by 1"
+            tasks.register<IncrementSemanticVersionTask>(TASK_NAME) {
+                version = semanticVersion
+                group = GROUP
+                description = "Increments the project's semantic version by 1"
+            }
         }
     }
 

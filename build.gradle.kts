@@ -1,7 +1,9 @@
+import com.github.gmazzo.gradle.plugins.BuildConfigExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version embeddedKotlinVersion apply false
+    id("com.github.gmazzo.buildconfig") version "3.0.1" apply false
 }
 
 subprojects {
@@ -44,6 +46,32 @@ subprojects {
             }
             publications.withType<MavenPublication> {
                 artifactId = the<BasePluginConvention>().archivesBaseName
+            }
+        }
+    }
+
+    plugins.withType<JavaGradlePluginPlugin> {
+        apply(plugin = "com.github.gmazzo.buildconfig")
+
+        configure<BuildConfigExtension> {
+            useKotlinOutput {
+                topLevelConstants = true
+                internalVisibility = true
+            }
+
+            afterEvaluate {
+                configure<GradlePluginDevelopmentExtension> {
+                    plugins.all {
+                        buildConfigField("String", "PLUGIN_ID", "\"${this@all.id}\"")
+                        buildConfigField("String", "PLUGIN_VERSION") { "\"${project.version}\"" }
+                        buildConfigField(
+                            "String",
+                            "PLUGIN_ARTIFACT"
+                        ) { "\"${project.group}:\${PLUGIN_ID}.gradle.plugin:\${PLUGIN_VERSION}\"" }
+                    }
+                }
+
+
             }
         }
     }
