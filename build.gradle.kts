@@ -67,7 +67,7 @@ subprojects {
                         buildConfigField(
                             "String",
                             "PLUGIN_ARTIFACT"
-                        ) { "\"${project.group}:\${PLUGIN_ID}.gradle.plugin:\${PLUGIN_VERSION}\"" }
+                        ) { "\"\${PLUGIN_ID}:\${PLUGIN_ID}.gradle.plugin:\${PLUGIN_VERSION}\"" }
                     }
                 }
 
