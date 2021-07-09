@@ -70,8 +70,6 @@ subprojects {
                         ) { "\"\${PLUGIN_ID}:\${PLUGIN_ID}.gradle.plugin:\${PLUGIN_VERSION}\"" }
                     }
                 }
-
-
             }
         }
     }
