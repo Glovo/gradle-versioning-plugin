@@ -40,7 +40,7 @@ class AndroidVersioningPlugin : Plugin<Project> {
                 tasks.register<IncrementNumericVersionTask>("incrementVersionCode") {
                     group = GROUP
                     description = "Increments the project's versionCode by 1"
-                    version = numericVersion
+                    version.value(numericVersion).disallowChanges()
                 }
             }
 
@@ -48,7 +48,7 @@ class AndroidVersioningPlugin : Plugin<Project> {
                 tasks.register<IncrementSemanticVersionTask>("incrementVersionName") {
                     group = GROUP
                     description = "Increments the project's versionName by 1"
-                    version = semanticVersion
+                    version.value(semanticVersion).disallowChanges()
                 }
             }
 
