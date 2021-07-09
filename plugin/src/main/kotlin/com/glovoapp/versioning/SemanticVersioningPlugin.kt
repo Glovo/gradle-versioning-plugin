@@ -30,9 +30,9 @@ class SemanticVersioningPlugin : Plugin<Project> {
             allprojects { version = semanticVersion }
 
             tasks.register<IncrementSemanticVersionTask>(TASK_NAME) {
-                version = semanticVersion
                 group = GROUP
                 description = "Increments the project's semantic version by 1"
+                version.value(semanticVersion).disallowChanges()
             }
         }
     }

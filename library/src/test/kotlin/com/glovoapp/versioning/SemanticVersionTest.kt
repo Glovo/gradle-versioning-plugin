@@ -36,6 +36,7 @@ class SemanticVersionTest {
 
     @ParameterizedTest
     @MethodSource("versions")
+    @Suppress("UNUSED_PARAMETER")
     fun `preReleaseIdentifiers, parses the preRelease value`(unused: String, version: SemanticVersion) {
         val expected = version.preRelease?.split('.') ?: emptyList()
 
@@ -44,6 +45,7 @@ class SemanticVersionTest {
 
     @ParameterizedTest
     @MethodSource("versions")
+    @Suppress("UNUSED_PARAMETER")
     fun `buildIdentifiers, parses the build value`(unused: String, version: SemanticVersion) {
         val expected = version.build?.split('.') ?: emptyList()
 
