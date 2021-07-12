@@ -52,6 +52,8 @@ class AndroidVersioningPlugin : Plugin<Project> {
                 }
             }
 
+            semanticVersion?.let { rootProject.enableExperimentalVersionSupport(it) }
+
             afterEvaluate {
                 check(plugins.hasPlugin(AndroidBasePlugin::class.java)) {
                     "${this@AndroidVersioningPlugin::class.java} requires an `android` to be applied"

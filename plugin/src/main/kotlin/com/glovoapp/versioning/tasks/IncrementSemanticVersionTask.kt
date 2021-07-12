@@ -67,6 +67,15 @@ open class IncrementSemanticVersionTask : DefaultTask() {
         preReleaseLabels.set(labels)
     }
 
+    @Option(
+        option = "release",
+        description = "Converts the current version into a release, by removing all `pre-release` tags"
+    )
+    fun release() {
+        preReleaseLabels.set(emptyList())
+        preservePreRelease.set(false)
+    }
+
     @Option(option = "build", description = "Adds build labels to the version")
     fun buildLabels(labels: List<String>) {
         buildLabels.set(labels)
