@@ -34,6 +34,8 @@ class SemanticVersioningPlugin : Plugin<Project> {
                 description = "Increments the project's semantic version by 1"
                 version.value(semanticVersion).disallowChanges()
             }
+
+            enableExperimentalVersionSupport(semanticVersion)
         }
     }
 
