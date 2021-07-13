@@ -1,3 +1,4 @@
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](./LICENSE)
 # gradle-versioning-plugin
 
 A Gradle plugin to unify the versioning workflow of Gradle builds.
