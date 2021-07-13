@@ -1,9 +1,10 @@
 plugins {
     `kotlin-dsl`
     `java-test-fixtures`
+    id("pl.droidsonroids.jacoco.testkit")
 }
 
-base.archivesBaseName = "gradle-versioning-plugin"
+base.archivesName.set("gradle-versioning-plugin")
 
 gradlePlugin {
     plugins {
