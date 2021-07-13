@@ -4,6 +4,7 @@ import org.gradle.testkit.runner.GradleRunner
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
 import java.io.File
+import java.io.FileOutputStream
 import java.util.*
 
 class GradleBuildExtension @JvmOverloads constructor(
@@ -21,6 +22,15 @@ class GradleBuildExtension @JvmOverloads constructor(
             .forwardOutput()
             .withPluginClasspath()
             .withProjectDir(root)
+            .withJaCoCo()
+    }
+
+    private fun GradleRunner.withJaCoCo() = apply {
+        javaClass.classLoader.getResourceAsStream("testkit-gradle.properties")!!.use { input ->
+            FileOutputStream(File(projectDir, "gradle.properties"), true).use { output ->
+                input.copyTo(output)
+            }
+        }
     }
 
     val buildFile by lazy { File(root, "build.gradle.kts") }
