@@ -2,4 +2,4 @@ plugins {
     `kotlin-dsl`
 }
 
-base.archivesBaseName = "versioning"
+base.archivesName.set("versioning")
