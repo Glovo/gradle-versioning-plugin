@@ -3,7 +3,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version embeddedKotlinVersion apply false
-    id("com.github.gmazzo.buildconfig") version "3.0.1" apply false
+    id("com.github.gmazzo.buildconfig") version "3.0.2" apply false
+    id("com.glovoapp.artifactory") version "0.1.16"
+    id("com.glovoapp.semantic-versioning") version "0.1.16"
 }
 
 subprojects {
@@ -63,11 +65,10 @@ subprojects {
                 configure<GradlePluginDevelopmentExtension> {
                     plugins.all {
                         buildConfigField("String", "PLUGIN_ID", "\"${this@all.id}\"")
-                        buildConfigField("String", "PLUGIN_VERSION") { "\"${project.version}\"" }
-                        buildConfigField(
-                            "String",
-                            "PLUGIN_ARTIFACT"
-                        ) { "\"\${PLUGIN_ID}:\${PLUGIN_ID}.gradle.plugin:\${PLUGIN_VERSION}\"" }
+                        buildConfigField("String", "PLUGIN_VERSION", provider { "\"${project.version}\"" })
+                        buildConfigField("String", "PLUGIN_ARTIFACT", provider {
+                            "\"\${PLUGIN_ID}:\${PLUGIN_ID}.gradle.plugin:\${PLUGIN_VERSION}\""
+                        })
                     }
                 }
             }

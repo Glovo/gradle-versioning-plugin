@@ -13,7 +13,7 @@ import org.gradle.kotlin.dsl.withType
 import java.io.File
 
 private const val PROPERTY_NAME = "com.glovoapp.versioning.experimental"
-private const val REPORT_FILE_NAME = "m2publications.txt"
+private const val REPORT_DIR = "m2publications"
 
 private val Task.allDependencies: Sequence<Task>
     get() = with(project.gradle.taskGraph) {
@@ -42,8 +42,8 @@ fun Project.enableExperimentalVersionSupport(semanticVersion: PersistedVersion<S
         description = "Modifies the project version by adding a 'dev-experimental' pre-release tag"
         version.value(semanticVersion).disallowChanges()
 
-        outputs.upToDateWhen { semanticVersion.value.preRelease != null }
         onlyIf { project.findProperty(PROPERTY_NAME)?.toString()?.toBoolean() ?: true }
+        onlyIf { semanticVersion.value.preRelease == null }
 
         doLast {
             with(styledOutput) {
@@ -67,7 +67,7 @@ fun Project.enableExperimentalVersionSupport(semanticVersion: PersistedVersion<S
 
     // collects all publications done to MavenLocal in a file (to support included builds)
     val collectPublications = tasks.register("collectMavenLocalPublications") {
-        val file = file("$buildDir/$REPORT_FILE_NAME")
+        val file = file("$buildDir/$REPORT_DIR/${project.name}.txt")
 
         outputs.file(file)
         doLast {
@@ -84,7 +84,7 @@ fun Project.enableExperimentalVersionSupport(semanticVersion: PersistedVersion<S
     val reportPublications = tasks.register("reportMavenLocalPublications") {
         val reports = fileTree(rootDir) {
             // this allows to scan this build and also any included build
-            include("**/${buildDir.name}/$REPORT_FILE_NAME")
+            include("**/${buildDir.name}/$REPORT_DIR/*.txt")
         }
 
         inputs.files(reports)
@@ -98,7 +98,6 @@ fun Project.enableExperimentalVersionSupport(semanticVersion: PersistedVersion<S
                 text("The following artifacts are available at ")
                 description.text("~/.m2/")
                 println(":")
-                println()
 
                 fun File.printPublications() = readLines().sorted().forEach {
                     val (group, artifact, version) = it.split(":")
@@ -113,6 +112,7 @@ fun Project.enableExperimentalVersionSupport(semanticVersion: PersistedVersion<S
                 when (builds.size) {
                     1 -> builds.first().printPublications()
                     else -> builds.forEach {
+                        println()
                         text("From ")
                         description.text(it.nameWithoutExtension)
                         println(":")
