@@ -14,8 +14,12 @@ open class IncrementNumericVersionTask : DefaultTask() {
     val version = project.objects.property<PersistedVersion<Int>>()
 
     @Input
-    @Option(option = "amount", description = "The amount to increment the numeric version")
     val amount = project.objects.property<Int>().convention(1)
+
+    @Option(option = "amount", description = "The amount to increment the numeric version")
+    fun amount(amount: String) {
+        this.amount.set(checkNotNull(amount.toIntOrNull()?.takeIf { it >= 0 }) { "amount `$amount` must be >= 0" })
+    }
 
     @TaskAction
     fun run() {
