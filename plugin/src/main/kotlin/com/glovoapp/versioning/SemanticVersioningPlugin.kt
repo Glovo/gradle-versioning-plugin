@@ -7,6 +7,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.typeOf
 
 class SemanticVersioningPlugin : Plugin<Project> {
 
@@ -27,7 +28,10 @@ class SemanticVersioningPlugin : Plugin<Project> {
             val persistedProperties = plugins.apply(PersistedVersionPlugin::class.java).persistedProperties
             val semanticVersion = persistedProperties.semanticVersion(key = "version")
 
-            allprojects { version = semanticVersion }
+            allprojects {
+                version = semanticVersion
+                extensions.add(typeOf<PersistedVersion<SemanticVersion>>(), "semanticVersion", semanticVersion)
+            }
 
             tasks.register<IncrementSemanticVersionTask>(TASK_NAME) {
                 group = GROUP
