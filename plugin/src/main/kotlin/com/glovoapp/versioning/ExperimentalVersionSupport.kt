@@ -70,6 +70,7 @@ fun Project.enableExperimentalVersionSupport(semanticVersion: PersistedVersion<S
         val file = file("$buildDir/$REPORT_DIR/${project.name}.txt")
 
         outputs.file(file)
+        outputs.upToDateWhen { false }
         doLast {
             file.writeText(
                 allDependencies
@@ -127,8 +128,11 @@ fun Project.enableExperimentalVersionSupport(semanticVersion: PersistedVersion<S
     allprojects {
 
         // makes versionTask the first task to run
-        tasks.matching { it != versionTask.get() }
-            .all { mustRunAfter(versionTask) }
+        tasks.configureEach {
+            if (this != versionTask.get()) {
+                mustRunAfter(versionTask)
+            }
+        }
 
         plugins.withType<MavenPublishPlugin> {
             val mavenLocal = tasks.named(MavenPublishPlugin.PUBLISH_LOCAL_LIFECYCLE_TASK_NAME) {
