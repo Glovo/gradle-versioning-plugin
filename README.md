@@ -17,8 +17,18 @@ plugins {
 }
 ```
 
-This will expect a `version.properties` file at root project containing the current version entry:
+Once applied, the `Project.version` will be set to an instance of `PersistedVersion<SemanticVersion>`. 
+It's also accessible from the property `semanticVersion`:
+```kotlin
 
+task("printVersion") {
+    doLast {
+        pritnln("The project current version is ${project.semanticVersion}")
+    }
+}
+```
+
+The plugin requires a `version.properties` file at root project containing the current version entry:
 ```properties
 version=1.2.3
 ```
@@ -58,27 +68,25 @@ plugins {
 }
 ```
 
-This plugin will apply `com.glovoapp.semantic-versioning` and then also add a `incrementVersionCode` linked
-to `versionCode` property in `version.properties`.
+Once applied, the `Project.version` will be set to an instance of `AndroidVersion`.
+It's also accessible from the property `androidVersion`:
+```kotlin
 
+task("printVersion") {
+    doLast {
+        pritnln("The project current versionCode is ${project.androidVersion.code} and name is ${project.androidVersion.name}")
+    }
+}
+```
+
+The plugin requires a `version.properties` file at root project containing the at least one of the following entries:
+```properties
+versionCode=10
+versionName=1.2.3
+```
+
+If `versionCode` is set, and `incrementVersionCode` task will be added to the project.
 The behavior is the same, when run, the task will increment the `versionCode` by 1 (or by `--amount=XXX`)
 
-## Releasing
-
-At the moment this plugin is published in a private Artifactory repository.
-
-To increment the version of the plugin to release modify the `version` property in the
-root [`build.gradle.kts`](build.gradle.kts) file:
-
-```kotlin
-version = major.minor.patch
-```
-
-A new version of the artifacts can be released by running:
-
-```
-./gradlew publish
-``` 
-
-The above command will push the new version to the Artifactory provided you have the necessary credentials. This should
-only be done from the CI.
+If `versionName` is set, and `incrementVersionName` task will be added to the project.
+The behavior is exactly the same as the `incrementSemanticVersion` task for non-Android projects.

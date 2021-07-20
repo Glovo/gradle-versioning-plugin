@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm") version embeddedKotlinVersion apply false
     id("com.github.gmazzo.buildconfig") version "3.0.2" apply false
     id("com.glovoapp.artifactory") version "0.1.16"
-    id("com.glovoapp.semantic-versioning") version "0.1.16"
+    id("com.glovoapp.semantic-versioning") version "0.1.18"
 }
 
 subprojects {
