@@ -10,6 +10,7 @@ gradlePlugin {
     plugins {
         create("semantic-versioning") {
             id = "com.glovoapp.semantic-versioning"
+            displayName = "semantic-versioning"
             implementationClass = "com.glovoapp.versioning.SemanticVersioningPlugin"
         }
     }
