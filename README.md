@@ -18,13 +18,13 @@ plugins {
 }
 ```
 
-Once applied, the `Project.version` will be set to an instance of `PersistedVersion<SemanticVersion>`. 
-It's also accessible from the property `semanticVersion`:
+Once applied, the `Project.version` will be set with the given version 
+which can it also be accessed from `semanticVersion.version` property:
 ```kotlin
 
 task("printVersion") {
     doLast {
-        pritnln("The project current version is ${project.semanticVersion}")
+        pritnln("The project current version is ${project.semanticVersion.version.get()}")
     }
 }
 ```
@@ -69,13 +69,13 @@ plugins {
 }
 ```
 
-Once applied, the `Project.version` will be set to an instance of `AndroidVersion`.
-It's also accessible from the property `androidVersion`:
+Once applied, version can access from the `android.versioning.version` property:
 ```kotlin
 
 task("printVersion") {
     doLast {
-        pritnln("The project current versionCode is ${project.androidVersion.code} and name is ${project.androidVersion.name}")
+        val androidVersion = project.android.versioning.version.get()
+        pritnln("The project current versionCode is ${androidVersion.code} and name is ${androidVersion.name}")
     }
 }
 ```

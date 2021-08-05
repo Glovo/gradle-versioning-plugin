@@ -51,4 +51,34 @@ class AndroidVersioningPluginTest {
         assertTrue("versionName=0.1.3" in versionFile.readLines())
     }
 
+    @Test
+    fun changePropertyFile() = with(gradle) {
+        buildFile.appendText(
+            """
+                
+            android {
+                versioning {
+                    propertiesFile.set(file("myVersions.properties"))
+                    versionCodeProperty.set("myVersionCode")
+                    versionNameProperty.set("myVersionName")
+                }
+            }
+            """.trimIndent()
+        )
+
+        val myVersionFile = File(root, "myVersions.properties").apply {
+            versionFile(
+                "myVersionCode" to "20",
+                "myVersionName" to "3.2.1"
+            )
+        }
+
+        val result = runner.withArguments("-s", "incrementVersionCode", "incrementVersionName").build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":incrementVersionCode")?.outcome)
+        assertEquals(TaskOutcome.SUCCESS, result.task(":incrementVersionName")?.outcome)
+        assertTrue("myVersionCode=21" in myVersionFile.readLines())
+        assertTrue("myVersionName=3.2.2" in myVersionFile.readLines())
+    }
+
 }
