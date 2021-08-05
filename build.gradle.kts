@@ -1,11 +1,11 @@
-import com.github.gmazzo.gradle.plugins.BuildConfigExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.sonarqube.gradle.SonarQubeExtension.SONARQUBE_TASK_NAME
 import java.lang.Thread.sleep
 
 plugins {
     kotlin("jvm") version embeddedKotlinVersion apply false
-    id("com.github.gmazzo.buildconfig") version "3.0.2" apply false
     id("com.glovoapp.artifactory") version "0.1.16"
     id("com.glovoapp.semantic-versioning") version "0.1.19"
     id("pl.droidsonroids.jacoco.testkit") version "1.0.8" apply false
@@ -48,7 +48,7 @@ subprojects {
         }
     }
 
-    configure<JavaPluginExtension>() {
+    configure<JavaPluginExtension> {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
@@ -79,29 +79,49 @@ subprojects {
                 maven("${rootProject.buildDir}/repo") { name = "local" }
             }
             publications.withType<MavenPublication> {
-                artifactId = the<BasePluginConvention>().archivesBaseName
+                artifactId = the<BasePluginExtension>().archivesName.apply { disallowChanges() }.get()
             }
         }
     }
 
     plugins.withType<JavaGradlePluginPlugin> {
-        apply(plugin = "com.github.gmazzo.buildconfig")
+        val outputDir = layout.buildDirectory.dir("generated/plugins/dsl")
+        val extension = the<GradlePluginDevelopmentExtension>()
 
-        configure<BuildConfigExtension> {
-            useKotlinOutput {
-                topLevelConstants = true
-                internalVisibility = true
-            }
+        val generateDSL by lazy {
+            tasks.register("generatePluginsDSL") {
+                outputs.dir(outputDir)
 
-            configure<GradlePluginDevelopmentExtension> {
-                plugins.all {
-                    buildConfigField("String", "PLUGIN_ID", provider { "\"${this@all.id}\"" })
-                    buildConfigField("String", "PLUGIN_VERSION", provider { "\"${project.version}\"" })
-                    buildConfigField("String", "PLUGIN_ARTIFACT", provider {
-                        "\"\${PLUGIN_ID}:\${PLUGIN_ID}.gradle.plugin:\${PLUGIN_VERSION}\""
-                    })
+                onlyIf { extension.plugins.isNotEmpty() }
+                doLast {
+                    outputDir.get().asFile.apply { deleteRecursively(); mkdirs() }
+                    outputDir.get().file("VersioningPluginDSL.kt").asFile.writeText(
+                        extension.plugins
+                            .filter { it.displayName != null }
+                            .joinToString(separator = "\n\n", prefix = "@file:JvmMultifileClass\n\n") {
+                                """
+                                    val org.gradle.plugin.use.PluginDependenciesSpec.`${it.displayName}`
+                                        get() = id("${it.id}")
+                                """.trimIndent()
+                            }
+                    )
                 }
             }
+        }
+
+        afterEvaluate {
+            extension.plugins.all {
+                generateDSL.configure {
+                    inputs.property("plugin:$id", implementationClass)
+                }
+            }
+        }
+
+        plugins.withType<KotlinPluginWrapper> {
+            project.the<KotlinSingleTargetExtension>()
+                .sourceSets["main"]
+                .kotlin
+                .srcDir(files(outputDir).builtBy(generateDSL))
         }
     }
 
