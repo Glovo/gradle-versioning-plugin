@@ -3,6 +3,11 @@ package com.glovoapp.versioning
 import java.io.File
 import java.util.*
 
+/**
+ * A [Properties] that dumps its content to the given [file] on each change.
+ *
+ * @constructor creates a new [PersistedProperties]. No exception will be thrown if [file] does not exists.
+ */
 class PersistedProperties(
     val file: File
 ) : Properties() {
@@ -10,7 +15,7 @@ class PersistedProperties(
     private var initialized = false
 
     init {
-        file.reader().use(::load)
+        file.takeIf(File::isFile)?.reader()?.use(::load)
         initialized = true
     }
 

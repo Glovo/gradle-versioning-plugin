@@ -1,13 +1,11 @@
 package com.glovoapp.versioning
 
-import com.glovoapp.gradle.plugin.PLUGIN_ARTIFACT
 import com.glovoapp.versioning.tasks.IncrementSemanticVersionTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.register
-import org.gradle.kotlin.dsl.typeOf
 
 class SemanticVersioningPlugin : Plugin<Project> {
 
@@ -17,30 +15,24 @@ class SemanticVersioningPlugin : Plugin<Project> {
     }
 
     override fun apply(target: Project): Unit = with(target) {
-        if (name == "buildSrc") {
-            apply(plugin = "java")
+        val extension = extensions.create<SemanticVersioningExtension>("semanticVersion")
 
-            dependencies {
-                "implementation"(PLUGIN_ARTIFACT)
+        allprojects {
+            version = ToStringProviderWrapper(extension.version)
+        }
+
+        tasks.register<IncrementSemanticVersionTask>(TASK_NAME) {
+            group = GROUP
+            description = "Increments the project's semantic version by 1"
+            version.value(extension.version).disallowChanges()
+        }
+
+        afterEvaluate {
+            if (extension.experimentalSupport.get()) {
+                apply<ExperimentalVersionPlugin>()
             }
-
-        } else {
-            val persistedProperties = plugins.apply(PersistedVersionPlugin::class.java).persistedProperties
-            val semanticVersion = persistedProperties.semanticVersion(key = "version")
-
-            allprojects {
-                version = semanticVersion
-                extensions.add(typeOf<PersistedVersion<SemanticVersion>>(), "semanticVersion", semanticVersion)
-            }
-
-            tasks.register<IncrementSemanticVersionTask>(TASK_NAME) {
-                group = GROUP
-                description = "Increments the project's semantic version by 1"
-                version.value(semanticVersion).disallowChanges()
-            }
-
-            enableExperimentalVersionSupport(semanticVersion)
         }
     }
 
 }
+
