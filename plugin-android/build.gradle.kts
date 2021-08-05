@@ -9,6 +9,7 @@ gradlePlugin {
     plugins {
         create("android-versioning") {
             id = "com.glovoapp.android-versioning"
+            displayName = "android-versioning"
             implementationClass = "com.glovoapp.versioning.AndroidVersioningPlugin"
         }
     }

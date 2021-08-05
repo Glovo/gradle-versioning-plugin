@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.Arguments.of
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
 
-class SemanticVersioningPluginTest() {
+class SemanticVersioningPluginTest {
 
     @JvmField
     @RegisterExtension
