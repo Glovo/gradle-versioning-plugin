@@ -2,10 +2,12 @@ package com.glovoapp.versioning
 
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments.of
 import org.junit.jupiter.params.provider.MethodSource
+import java.io.File
 import java.util.stream.Stream
 
 class SemanticVersioningPluginTest {
@@ -38,6 +40,33 @@ class SemanticVersioningPluginTest {
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":incrementSemanticVersion")?.outcome)
         assertEquals("version=$expectedVersion", versionFile.readLines().drop(1).firstOrNull())
+    }
+
+    @Test
+    fun projectVersionIsSet() {
+        with(gradle) {
+            versionFile("version" to "1.2.3")
+
+            buildFile.appendText("""
+                
+                task("storeVersion") {
+                    val initial = project.version.toString()
+                    doLast {
+                        file("${'$'}buildDir/versions.properties")
+                            .apply { parentFile.mkdirs() } 
+                            .writeText("initial=${'$'}initial\nexecution=${'$'}{project.version}")
+                    }
+                }
+                
+            """.trimIndent())
+
+            val result = runner
+                .withArguments(listOfNotNull("-s", "storeVersion"))
+                .build()
+
+            assertEquals(TaskOutcome.SUCCESS, result.task(":storeVersion")?.outcome)
+            assertEquals("initial=1.2.3\nexecution=1.2.3", File(root, "build/versions.properties").readText())
+        }
     }
 
     companion object {

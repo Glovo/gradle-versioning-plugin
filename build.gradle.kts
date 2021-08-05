@@ -75,9 +75,6 @@ subprojects {
 
     plugins.withType<PublishingPlugin> {
         configure<PublishingExtension> {
-            repositories {
-                maven("${rootProject.buildDir}/repo") { name = "local" }
-            }
             publications.withType<MavenPublication> {
                 artifactId = the<BasePluginExtension>().archivesName.apply { disallowChanges() }.get()
             }

@@ -41,7 +41,6 @@ class GradleBuildExtension @JvmOverloads constructor(
                 writeText(
                     """
                     version=0.0.1
-                    versionCode=10
                     """.trimIndent()
                 )
             }
@@ -65,10 +64,13 @@ class GradleBuildExtension @JvmOverloads constructor(
         buildFile.writeText(content())
     }
 
-    fun versionFile(vararg entries: Pair<String, String>) = with(Properties()) {
-        versionFile.takeIf { it.isFile }?.reader()?.use(::load)
+    fun versionFile(vararg entries: Pair<String, String>) =
+        versionFile.versionFile(*entries)
+
+    fun File.versionFile(vararg entries: Pair<String, String>) = with(Properties()) {
+        this@versionFile.takeIf { it.isFile }?.reader()?.use(::load)
         putAll(entries)
-        versionFile.writer().use { store(it, null) }
+        writer().use { store(it, null) }
     }
 
 }
