@@ -1,5 +1,6 @@
 plugins {
     `kotlin-dsl`
+    id("com.gradle.plugin-publish")
     id("pl.droidsonroids.jacoco.testkit")
 }
 
@@ -13,6 +14,13 @@ gradlePlugin {
             implementationClass = "com.glovoapp.versioning.AndroidVersioningPlugin"
         }
     }
+}
+
+pluginBundle {
+    website = "https://github.com/Glovo/gradle-versioning-plugin"
+    vcsUrl = "https://github.com/Glovo/gradle-versioning-plugin"
+    description = "An Android Gradle plugin implementing https://semver.org/"
+    tags = listOf("gradle", "versioning", "semantic-versioning", "java", "kotlin", "android")
 }
 
 dependencies {
