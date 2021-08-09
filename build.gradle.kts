@@ -6,8 +6,8 @@ import java.lang.Thread.sleep
 
 plugins {
     kotlin("jvm") version embeddedKotlinVersion apply false
-    id("com.glovoapp.artifactory") version "0.1.16"
-    id("com.glovoapp.semantic-versioning") version "0.1.23"
+    id("com.glovoapp.semantic-versioning") version "0.1.24"
+    id("com.gradle.plugin-publish") version "0.15.0" apply false
     id("pl.droidsonroids.jacoco.testkit") version "1.0.8" apply false
     id("org.sonarqube") version "3.3"
 }
@@ -26,9 +26,17 @@ sonarqube {
     }
 }
 
+allprojects {
+    repositories {
+        mavenCentral()
+        google()
+    }
+}
+
 subprojects {
     apply(plugin = "java")
     apply(plugin = "jacoco")
+    apply(plugin = "maven-publish")
 
     group = "com.glovoapp.gradle"
 
@@ -73,6 +81,7 @@ subprojects {
         dependsOn(tasks.withType<JacocoReport>())
     }
 
+    // configures a default `artifactId` from `archivesName`
     plugins.withType<PublishingPlugin> {
         configure<PublishingExtension> {
             publications.withType<MavenPublication> {
@@ -82,6 +91,7 @@ subprojects {
         }
     }
 
+    // generates plugins DSL from the plugins descriptions
     plugins.withType<JavaGradlePluginPlugin> {
         val outputDir = layout.buildDirectory.dir("generated/plugins/dsl")
         val extension = the<GradlePluginDevelopmentExtension>()
