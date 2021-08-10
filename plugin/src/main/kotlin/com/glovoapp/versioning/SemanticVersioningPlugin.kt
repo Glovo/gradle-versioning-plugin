@@ -12,9 +12,18 @@ class SemanticVersioningPlugin : Plugin<Project> {
     companion object {
         const val GROUP = "versioning"
         const val TASK_NAME = "incrementSemanticVersion"
+        val minimumGradleVersion = SemanticVersion(7, 1, 1)
+
+        fun Project.ensureGradleVersion() =
+            check(SemanticVersion.parse(gradle.gradleVersion) >= minimumGradleVersion) {
+                "This plugin requires at least Gradle $minimumGradleVersion"
+            }
+
     }
 
     override fun apply(target: Project): Unit = with(target) {
+        ensureGradleVersion()
+
         val extension = extensions.create<SemanticVersioningExtension>("semanticVersion")
 
         allprojects {
