@@ -1,5 +1,6 @@
 package com.glovoapp.versioning
 
+import com.glovoapp.versioning.SemanticVersion.Companion.toVersion
 import com.glovoapp.versioning.tasks.IncrementSemanticVersionTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -12,12 +13,11 @@ class SemanticVersioningPlugin : Plugin<Project> {
     companion object {
         const val GROUP = "versioning"
         const val TASK_NAME = "incrementSemanticVersion"
-        val minimumGradleVersion = SemanticVersion(7, 1, 1)
+        val minimumGradleVersion = SemanticVersion(7, 1)
 
-        fun Project.ensureGradleVersion() =
-            check(SemanticVersion.parse(gradle.gradleVersion) >= minimumGradleVersion) {
-                "This plugin requires at least Gradle $minimumGradleVersion"
-            }
+        fun Project.ensureGradleVersion() = check(gradle.gradleVersion.toVersion() >= minimumGradleVersion) {
+            "This plugin requires at least Gradle $minimumGradleVersion"
+        }
 
     }
 
