@@ -2,14 +2,18 @@ package com.glovoapp.versioning
 
 import com.glovoapp.versioning.SemanticVersion.Companion.toVersion
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments.of
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
+import kotlin.random.Random
 
 class SemanticVersionTest {
+
+    private val random = Random(0) // for deterministic shuffle
 
     @Test
     fun `parse, throws an error if can't parse`() {
@@ -57,8 +61,8 @@ class SemanticVersionTest {
     fun `plus, returns the incremented version`(version: SemanticVersion, increment: SemanticVersion.Increment) {
         val expected = when (increment) {
             SemanticVersion.Increment.MAJOR -> version.copy(major = version.major + 1, minor = 0, patch = 0)
-            SemanticVersion.Increment.MINOR -> version.copy(minor = version.minor + 1, patch = 0)
-            SemanticVersion.Increment.PATCH -> version.copy(patch = version.patch + 1)
+            SemanticVersion.Increment.MINOR -> version.copy(minor = (version.minor ?: 0) + 1, patch = 0)
+            SemanticVersion.Increment.PATCH -> version.copy(patch = (version.patch ?: 0) + 1)
         }
         val actual = version + increment
 
@@ -69,9 +73,23 @@ class SemanticVersionTest {
     @MethodSource("versionsForCompare")
     fun `compare, returns if older or newer than other`(expected: List<SemanticVersion>) {
         // in case of any error, the list will be not in the original order
-        val actual = expected.shuffled().sorted()
+        val actual = expected.shuffled(random).sorted()
 
         assertEquals(expected, actual)
+    }
+
+    @ParameterizedTest
+    @MethodSource("simplifiedVersions")
+    fun `compare, simplified versions are equals but it's string representation is different`(
+        simplifiedVersion: String,
+        expectedFullVersion: String
+    ) {
+        val simplified = simplifiedVersion.toVersion()
+        val expected = expectedFullVersion.toVersion()
+
+        assertNotEquals(simplified, expected)
+        assertEquals(simplified.toString(), simplifiedVersion)
+        assertNotEquals(simplified.toString(), expected.toString())
     }
 
     companion object {
@@ -79,6 +97,8 @@ class SemanticVersionTest {
         @JvmStatic
         fun versions() = Stream.of(
             of("0.0.4", SemanticVersion(0, 0, 4)),
+            of("1", SemanticVersion(1)),
+            of("1.2", SemanticVersion(1, 2)),
             of("1.2.3", SemanticVersion(1, 2, 3)),
             of("10.20.30", SemanticVersion(10, 20, 30)),
             of("1.1.2-prerelease+meta", SemanticVersion(1, 1, 2, "prerelease", "meta")),
@@ -153,7 +173,26 @@ class SemanticVersionTest {
                     SemanticVersion(1, 0, 0, "rc.1"),
                     SemanticVersion(1, 0, 0)
                 )
-            )
+            ),
+            of(
+                listOf(
+                    SemanticVersion(1),
+                    SemanticVersion(1, 0),
+                    SemanticVersion(1, 0, 0),
+                    SemanticVersion(2),
+                    SemanticVersion(2, 0),
+                    SemanticVersion(2, 1),
+                    SemanticVersion(2, 1, 0),
+                    SemanticVersion(2, 1, 1)
+                )
+            ),
+        )
+
+        @JvmStatic
+        fun simplifiedVersions() = Stream.of(
+            of("1", "1.0.0"),
+            of("1.0", "1.0.0"),
+            of("7.1", "7.1.0"),
         )
 
     }

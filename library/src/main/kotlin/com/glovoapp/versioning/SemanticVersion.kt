@@ -2,8 +2,8 @@ package com.glovoapp.versioning;
 
 data class SemanticVersion(
     val major: Int,
-    val minor: Int,
-    val patch: Int,
+    val minor: Int? = null,
+    val patch: Int? = null,
     val preRelease: String? = null,
     val build: String? = null
 ) : Comparable<SemanticVersion> {
@@ -20,7 +20,7 @@ data class SemanticVersion(
 
         // https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
         private val VERSION_PATTERN =
-            "(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?".toRegex(
+            "(0|[1-9]\\d*)(?:\\.(0|[1-9]\\d*)(?:\\.(0|[1-9]\\d*))?)?(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?".toRegex(
                 RegexOption.IGNORE_CASE
             )
 
@@ -31,8 +31,8 @@ data class SemanticVersion(
 
             SemanticVersion(
                 major = groupValues[1].toInt(),
-                minor = groupValues[2].toInt(),
-                patch = groupValues[3].toInt(),
+                minor = groupValues[2].toIntOrNull(),
+                patch = groupValues[3].toIntOrNull(),
                 preRelease = groupValues[4].takeIf { it.isNotBlank() },
                 build = groupValues[5].takeIf { it.isNotBlank() }
             )
@@ -50,8 +50,8 @@ data class SemanticVersion(
 
     operator fun plus(increment: Pair<Increment, Int>) = when (increment.first) {
         Increment.MAJOR -> copy(major = major + increment.second, minor = 0, patch = 0)
-        Increment.MINOR -> copy(minor = minor + increment.second, patch = 0)
-        Increment.PATCH -> copy(patch = patch + increment.second)
+        Increment.MINOR -> copy(minor = (minor ?: 0) + increment.second, patch = 0)
+        Increment.PATCH -> copy(patch = (patch ?: 0) + increment.second)
     }
 
     // https://semver.org/#spec-item-11
@@ -62,6 +62,11 @@ data class SemanticVersion(
         preRelease == null -> if (other.preRelease == null) 0 else 1
         other.preRelease == null -> -1
         else -> preReleaseIdentifiers.compareTo(other.preReleaseIdentifiers)
+    }
+
+    private fun Int?.compareTo(other: Int?) = when(this) {
+        null -> if (other == null) 0 else -1
+        else -> if (other == null) 1 else compareTo(other)
     }
 
     private tailrec fun List<String>.compareTo(other: List<String>, index: Int = 0): Int = when {
@@ -86,6 +91,12 @@ data class SemanticVersion(
     private fun String?.prefix(prefix: String) =
         if (isNullOrBlank()) "" else prefix + this
 
-    override fun toString() = "$major.$minor.$patch${preRelease.prefix("-")}${build.prefix("+")}"
+    override fun toString() = "$major${minor.versionStr}${patch.versionStr}${preRelease.prefix("-")}${build.prefix("+")}"
+
+    private inline val Int?.versionStr
+        get() = when (this) {
+            null -> ""
+            else -> ".$this"
+        }
 
 }
