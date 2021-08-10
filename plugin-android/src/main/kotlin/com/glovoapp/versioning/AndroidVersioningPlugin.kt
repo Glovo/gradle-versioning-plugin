@@ -4,6 +4,7 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidBasePlugin
 import com.android.build.gradle.internal.plugins.BasePlugin
 import com.glovoapp.versioning.SemanticVersioningPlugin.Companion.GROUP
+import com.glovoapp.versioning.SemanticVersioningPlugin.Companion.ensureGradleVersion
 import com.glovoapp.versioning.tasks.IncrementNumericVersionTask
 import com.glovoapp.versioning.tasks.IncrementSemanticVersionTask
 import org.gradle.api.Plugin
@@ -17,6 +18,8 @@ import org.gradle.kotlin.dsl.withType
 class AndroidVersioningPlugin : Plugin<Project> {
 
     override fun apply(target: Project): Unit = with(target) {
+        ensureGradleVersion()
+
         val extension by lazy {
             DslObject(extensions.getByName("android"))
                 .extensions.create<AndroidVersioningExtension>("versioning")

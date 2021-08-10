@@ -20,6 +20,7 @@ class GradleBuildExtension @JvmOverloads constructor(
     val runner by lazy {
         GradleRunner.create()
             .forwardOutput()
+            .withGradleVersion(SemanticVersioningPlugin.`minimumGradleVersion`.toString())
             .withPluginClasspath()
             .withProjectDir(root)
             .withJaCoCo()
