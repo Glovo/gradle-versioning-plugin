@@ -4,6 +4,7 @@ import com.glovoapp.versioning.tasks.EnsureExperimentalVersionTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.publish.maven.tasks.PublishToMavenLocal
 import org.gradle.configurationcache.extensions.serviceOf
@@ -13,6 +14,7 @@ import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.the
 import org.gradle.kotlin.dsl.withType
 import java.io.File
+import java.util.*
 
 /**
  * Configures the build to:
@@ -23,6 +25,7 @@ internal class ExperimentalVersionPlugin : Plugin<Project> {
 
     companion object {
         private const val REPORT_DIR = "m2publications"
+        private val uuids = WeakHashMap<Gradle, UUID>()
     }
 
     override fun apply(target: Project): Unit = with(target) {
@@ -54,9 +57,16 @@ internal class ExperimentalVersionPlugin : Plugin<Project> {
             }
         }
 
+        val buildId by lazy {
+            // TODO research if there is a Gradle API for "build id"
+            generateSequence(gradle, Gradle::getParent)
+                .last()
+                .let { uuids.getOrPut(it) { UUID.randomUUID() } }
+        }
+
         // collects all publications done to MavenLocal in a file (to support included builds)
         val collectPublications = tasks.register("collectMavenLocalPublications") {
-            val file = file("$buildDir/$REPORT_DIR/${project.name}.txt")
+            val file = file("$buildDir/$REPORT_DIR/${buildId}/${project.name}.txt")
 
             outputs.file(file)
             outputs.upToDateWhen { false }
@@ -74,7 +84,7 @@ internal class ExperimentalVersionPlugin : Plugin<Project> {
         val reportPublications = tasks.register("reportMavenLocalPublications") {
             val reports = fileTree(rootDir) {
                 // this allows to scan this build and also any included build
-                include("**/${buildDir.name}/$REPORT_DIR/*.txt")
+                include("**/${buildDir.name}/$REPORT_DIR/${buildId}/*.txt")
             }
 
             inputs.files(reports)
@@ -107,10 +117,11 @@ internal class ExperimentalVersionPlugin : Plugin<Project> {
                             description.text(it.nameWithoutExtension)
                             println(":")
                             it.printPublications()
-                            println()
                         }
                     }
                 }
+
+                reports.files.forEach(File::deleteOnExit)
             }
         }
 

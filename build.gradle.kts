@@ -7,7 +7,7 @@ import java.lang.Thread.sleep
 plugins {
     kotlin("jvm") version embeddedKotlinVersion apply false
     id("com.glovoapp.artifactory") version "0.1.16"
-    id("com.glovoapp.semantic-versioning") version "0.1.19"
+    id("com.glovoapp.semantic-versioning") version "0.1.23"
     id("pl.droidsonroids.jacoco.testkit") version "1.0.8" apply false
     id("org.sonarqube") version "3.3"
 }
