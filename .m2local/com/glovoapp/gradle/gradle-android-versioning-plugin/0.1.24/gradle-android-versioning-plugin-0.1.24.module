@@ -1,0 +1,89 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.glovoapp.gradle",
+    "module": "gradle-android-versioning-plugin",
+    "version": "0.1.24",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.localToProject": "public",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "com.glovoapp.gradle",
+          "module": "gradle-versioning-plugin",
+          "version": {
+            "requires": "0.1.24"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "gradle-android-versioning-plugin-0.1.24.jar",
+          "url": "gradle-android-versioning-plugin-0.1.24.jar",
+          "size": 30393,
+          "sha512": "5ac86a23763ada16acd78d3c6c2bf0b8f41c4c923b4c2b86f730e03a82ad02d4042c1529b92b92fca07c499e00e4054c5d235cf45184dfcd68202cd41e932a96",
+          "sha256": "5c6721a58ef4773f91eda4b347c959ec46b902e8941980a4b7d5fc3c2b334ec2",
+          "sha1": "104558800d33200350fa175bc60e6cfad1742401",
+          "md5": "fd0b48587403dee5b74b13a5333cd09e"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.localToProject": "public",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "com.android.tools.build",
+          "module": "gradle",
+          "version": {
+            "requires": "7.0.0"
+          }
+        },
+        {
+          "group": "com.glovoapp.gradle",
+          "module": "gradle-versioning-plugin",
+          "version": {
+            "requires": "0.1.24"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "gradle-android-versioning-plugin-0.1.24.jar",
+          "url": "gradle-android-versioning-plugin-0.1.24.jar",
+          "size": 30393,
+          "sha512": "5ac86a23763ada16acd78d3c6c2bf0b8f41c4c923b4c2b86f730e03a82ad02d4042c1529b92b92fca07c499e00e4054c5d235cf45184dfcd68202cd41e932a96",
+          "sha256": "5c6721a58ef4773f91eda4b347c959ec46b902e8941980a4b7d5fc3c2b334ec2",
+          "sha1": "104558800d33200350fa175bc60e6cfad1742401",
+          "md5": "fd0b48587403dee5b74b13a5333cd09e"
+        }
+      ]
+    }
+  ]
+}
