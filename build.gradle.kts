@@ -78,6 +78,7 @@ subprojects {
             publications.withType<MavenPublication> {
                 artifactId = the<BasePluginExtension>().archivesName.apply { disallowChanges() }.get()
             }
+            repositories { maven(file("$rootDir/.m2local")) { name = "Local" } }
         }
     }
 
