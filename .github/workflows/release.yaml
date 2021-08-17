@@ -4,7 +4,7 @@ on:
     workflows:
       - build
     branches:
-      - main
+      - master
     types:
       - completed
 
