@@ -1,4 +1,7 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](./LICENSE)
+[![Plugins Site](https://img.shields.io/maven-metadata/v/https/plugins.gradle.org/m2/com/glovoapp/gradle/gradle-versioning-plugin/maven-metadata.xml.svg?label=gradle-plugins)](https://plugins.gradle.org/plugin/com.glovoapp.semantic-versioning)
+![Build Status](https://github.com/Glovo/gradle-versioning-plugin/actions/workflows/build.yaml/badge.svg)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Glovo_gradle-versioning-plugin&metric=coverage&token=6b5b2b8c32bc6be61f60223590e3d1be371ac0fb)](https://sonarcloud.io/dashboard?id=Glovo_gradle-versioning-plugin)
 # gradle-versioning-plugin
 
 A Gradle plugin to unify the versioning workflow of Gradle builds.
