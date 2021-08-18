@@ -36,6 +36,7 @@ allprojects {
 subprojects {
     apply(plugin = "java")
     apply(plugin = "jacoco")
+    apply(plugin = "signing")
     apply(plugin = "maven-publish")
 
     group = "com.glovoapp.gradle"
@@ -64,6 +65,14 @@ subprojects {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
+    configure<SigningExtension> {
+        val signingKey: String? by project
+        val signingPassword: String? by project
+
+        useInMemoryPgpKeys(signingKey, signingPassword)
+        sign(the<PublishingExtension>().publications)
+    }
+
     tasks.withType<Test> {
         systemProperty("tests.tmp.dir", temporaryDir)
 
@@ -75,6 +84,11 @@ subprojects {
         reports.xml.required.set(true)
         reports.html.required.set(true)
         dependsOn(tasks.withType<Test>())
+    }
+
+    // ensures `publishPlugins` runs right after `publish`
+    tasks.named("publish") {
+        finalizedBy("publishPlugins")
     }
 
     rootProject.tasks.named(SONARQUBE_TASK_NAME).configure {

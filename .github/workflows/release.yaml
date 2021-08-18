@@ -42,4 +42,9 @@ jobs:
           git tag $VERSION
           git push --tags
       - name: Publish plugin
-        run: ./gradlew -Pgradle.publish.key=${{ secrets.GRADLE_KEY }} -Pgradle.publish.secret=${{ secrets.GRADLE_SECRET }} -s publishPlugins
+        env:
+          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_gradle.publish.key: ${{ secrets.GRADLE_KEY }}
+          ORG_GRADLE_PROJECT_gradle.publish.secret: ${{ secrets.GRADLE_SECRET }}
+        run: ./gradlew -s publish
