@@ -1,11 +1,19 @@
 plugins {
     `kotlin-dsl`
     `java-test-fixtures`
-    id("com.gradle.plugin-publish")
+    `gradle-plugin`
+    `code-coverage`
     id("pl.droidsonroids.jacoco.testkit")
 }
 
+description = "Semantic Versioning Gradle Plugin"
 base.archivesName.set("gradle-versioning-plugin")
+
+dependencies {
+    api(project(":library"))
+    testFixturesApi(gradleTestKit())
+    junit5("testFixturesApi")
+}
 
 gradlePlugin {
     plugins {
@@ -24,6 +32,6 @@ pluginBundle {
     tags = listOf("gradle", "versioning", "semantic-versioning", "java", "kotlin")
 }
 
-dependencies {
-    api(project(":library"))
+tasks.named("publish") {
+    mustRunAfter(":library:publish")
 }
