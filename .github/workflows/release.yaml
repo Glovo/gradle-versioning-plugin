@@ -1,12 +1,15 @@
 name: release
 on:
   pull_request:
-    types: [ closed ]
+    types:
+      - closed
+    branches:
+      - master
 
 jobs:
   Release:
     runs-on: ubuntu-20.04
-    if: ${{ github.event.pull_request.merged == true && !startsWith(github.head_ref, 'no-release/') }
+    if: ${{ github.event.pull_request.merged == true && !startsWith(github.head_ref, 'no-release/') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -44,3 +47,9 @@ jobs:
           ORG_GRADLE_PROJECT_gradle.publish.key: ${{ secrets.GRADLE_PUBLISH_KEY }}
           ORG_GRADLE_PROJECT_gradle.publish.secret: ${{ secrets.GRADLE_PUBLISH_SECRET }}
         run: ./gradlew -s publish
+      - name: Publish GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "**/build/libs/*,!buildSrc/**"
+          tag: ${{ env.VERSION }}
+          token: ${{ secrets.GITHUB_TOKEN }}
