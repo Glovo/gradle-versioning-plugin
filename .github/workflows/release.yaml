@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GLOVO_ROBOT_PKG_TOKEN }} # requires push access to master as admin
       - name: Setup JDK11
         uses: actions/setup-java@v2
         with:
@@ -31,20 +33,19 @@ jobs:
         uses: ./.github/actions/compute-release-type
       - name: Bump version
         id: bump-version
-        env:
-          GITHUB_TOKEN: ${{ secrets.GLOVO_ROBOT_PKG_TOKEN }}
         run: |
           ./gradlew incrementSemanticVersion --${{ steps.compute-release-type.outputs.release-type }}
           VERSION=$(cat version.properties | grep version | cut -d'=' -f2)
           git config user.name \"GlovoRobot\"
           git config user.email "tech.platform@glovoapp.com"
-          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/$GITHUB_REPOSITORY
           git add version.properties
-          git commit -m 'Bump version $VERSION'
+          git commit -m "Bump version $VERSION"
           git push
           git tag $VERSION
           git push --tags
           echo "::set-output name=version::$(echo $VERSION)"
+      - run: exit 1
+        name: Abort release
       - name: Publish plugin
         env:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}

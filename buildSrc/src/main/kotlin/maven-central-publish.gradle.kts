@@ -2,11 +2,16 @@ plugins {
     java
     signing
     `maven-publish`
+    id("org.jetbrains.dokka")
 }
 
 java {
     withJavadocJar()
     withSourcesJar()
+}
+
+tasks.named<Jar>("javadocJar") {
+    from(tasks.named("dokkaJavadoc"))
 }
 
 signing {
