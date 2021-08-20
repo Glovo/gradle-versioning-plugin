@@ -1,17 +1,12 @@
 name: release
 on:
-  workflow_run:
-    workflows:
-      - build
-    branches:
-      - master
-    types:
-      - completed
+  pull_request:
+    types: [ closed ]
 
 jobs:
   Release:
     runs-on: ubuntu-20.04
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.pull_request.merged == true && !startsWith(github.head_ref, 'no-release/') }
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -28,14 +23,13 @@ jobs:
             ~/.sonar/cache
           key: ${{ runner.os }}-cache-${{ hashFiles('**/*.gradle.kts') }}
           restore-keys: ${{ runner.os }}-cache
+      - id: compute-release-type
+        name: Compute release type
+        uses: ./.github/actions/compute-release-type
       - name: Bump version
         run: |
-          branch=${GITHUB_REF#refs/heads/}
-          if [[ $branch == "major/"* ]]; then type=major; elif [[ $branch == "minor/"* ]]; then type=minor; else type=patch; fi
-          ./gradlew incrementSemanticVersion --$type
+          ./gradlew incrementSemanticVersion --${{ steps.compute-release-type.outputs.release-type }}
           echo "VERSION=$(cat version.properties | grep version | cut -d'=' -f2)" >> $GITHUB_ENV
-      - name: Tag version
-        run: |
           git add version.properties
           git commit -m '[NO-CI] Bump version $VERSION'
           git push
