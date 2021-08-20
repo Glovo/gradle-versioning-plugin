@@ -1,20 +1,20 @@
 name: release
 on:
-  workflow_run:
-    workflows:
-      - build
+  pull_request:
+    types:
+      - closed
     branches:
       - master
-    types:
-      - completed
 
 jobs:
   Release:
     runs-on: ubuntu-20.04
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.pull_request.merged == true && !startsWith(github.head_ref, 'no-release/') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GLOVO_ROBOT_PKG_TOKEN }} # requires push access to master as admin
       - name: Setup JDK11
         uses: actions/setup-java@v2
         with:
@@ -28,19 +28,24 @@ jobs:
             ~/.sonar/cache
           key: ${{ runner.os }}-cache-${{ hashFiles('**/*.gradle.kts') }}
           restore-keys: ${{ runner.os }}-cache
+      - id: compute-release-type
+        name: Compute release type
+        uses: ./.github/actions/compute-release-type
       - name: Bump version
+        id: bump-version
         run: |
-          branch=${GITHUB_REF#refs/heads/}
-          if [[ $branch == "major/"* ]]; then type=major; elif [[ $branch == "minor/"* ]]; then type=minor; else type=patch; fi
-          ./gradlew incrementSemanticVersion --$type
-          echo "VERSION=$(cat version.properties | grep version | cut -d'=' -f2)" >> $GITHUB_ENV
-      - name: Tag version
-        run: |
+          ./gradlew incrementSemanticVersion --${{ steps.compute-release-type.outputs.release-type }}
+          VERSION=$(cat version.properties | grep version | cut -d'=' -f2)
+          git config user.name \"GlovoRobot\"
+          git config user.email "tech.platform@glovoapp.com"
           git add version.properties
-          git commit -m '[NO-CI] Bump version $VERSION'
+          git commit -m "Bump version $VERSION"
           git push
           git tag $VERSION
           git push --tags
+          echo "::set-output name=version::$(echo $VERSION)"
+      - run: exit 1
+        name: Abort release
       - name: Publish plugin
         env:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
@@ -50,3 +55,9 @@ jobs:
           ORG_GRADLE_PROJECT_gradle.publish.key: ${{ secrets.GRADLE_PUBLISH_KEY }}
           ORG_GRADLE_PROJECT_gradle.publish.secret: ${{ secrets.GRADLE_PUBLISH_SECRET }}
         run: ./gradlew -s publish
+      - name: Publish GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "**/build/libs/*,!buildSrc/**"
+          tag: ${{ steps.bump-version.outputs.version }}
+          token: ${{ secrets.GITHUB_TOKEN }}
