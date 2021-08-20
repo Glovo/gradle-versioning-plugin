@@ -33,7 +33,7 @@ jobs:
         run: |
           ./gradlew incrementSemanticVersion --${{ steps.compute-release-type.outputs.release-type }}
           echo "VERSION=$(cat version.properties | grep version | cut -d'=' -f2)" >> $GITHUB_ENV
-          git config user.name "$GITHUB_USER"
+          git config user.name \"GlovoRobot\"
           git config user.email "tech.platform@glovoapp.com"
           git add version.properties
           git commit -m 'Bump version $VERSION'
