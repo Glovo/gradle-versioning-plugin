@@ -30,9 +30,10 @@ jobs:
         name: Compute release type
         uses: ./.github/actions/compute-release-type
       - name: Bump version
+        id: bump-version
         run: |
           ./gradlew incrementSemanticVersion --${{ steps.compute-release-type.outputs.release-type }}
-          echo "VERSION=$(cat version.properties | grep version | cut -d'=' -f2)" >> $GITHUB_ENV
+          VERSION=$(cat version.properties | grep version | cut -d'=' -f2)
           git config user.name \"GlovoRobot\"
           git config user.email "tech.platform@glovoapp.com"
           git add version.properties
@@ -40,6 +41,7 @@ jobs:
           git push
           git tag $VERSION
           git push --tags
+          echo "::set-output name=version::$(echo $VERSION)"
       - name: Publish plugin
         env:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
@@ -53,5 +55,5 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "**/build/libs/*,!buildSrc/**"
-          tag: ${{ env.VERSION }}
+          tag: ${{ steps.bump-version.outputs.version }}
           token: ${{ secrets.GITHUB_TOKEN }}
