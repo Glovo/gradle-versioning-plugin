@@ -32,7 +32,7 @@ class SemanticVersioningPlugin : Plugin<Project> {
 
         tasks.register<IncrementSemanticVersionTask>(TASK_NAME) {
             group = GROUP
-            description = "Increments the project's semantic version by 1"
+            description = "Increments the project's semantic version by given `increment`"
             version.value(extension.version).disallowChanges()
         }
 

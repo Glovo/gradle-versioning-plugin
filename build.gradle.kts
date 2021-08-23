@@ -1,5 +1,5 @@
 plugins {
-    id("com.glovoapp.semantic-versioning") version "0.1.24"
+    id("com.glovoapp.semantic-versioning") version "1.1.0"
     id("io.github.gradle-nexus.publish-plugin") version "1.1.0"
 }
 
