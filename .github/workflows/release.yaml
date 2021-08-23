@@ -56,5 +56,5 @@ jobs:
       - name: Publish GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "**/build/libs/*,!buildSrc/**"
+          artifacts: "/!(buildSrc)/**/build/libs/**"
           tag: ${{ steps.bump-version.outputs.version }}
