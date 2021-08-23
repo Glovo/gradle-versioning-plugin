@@ -39,7 +39,7 @@ class AndroidVersioningPlugin : Plugin<Project> {
             val incrementVersionCodeTask = androidVersion.code?.let {
                 tasks.register<IncrementNumericVersionTask>("incrementVersionCode") {
                     group = GROUP
-                    description = "Increments the project's versionCode by 1"
+                    description = "Increments the project's versionCode by given `amount`"
                     version.value(it).disallowChanges()
                 }
             }
@@ -47,7 +47,7 @@ class AndroidVersioningPlugin : Plugin<Project> {
             val incrementVersionNameTask = androidVersion.name?.let {
                 tasks.register<IncrementSemanticVersionTask>("incrementVersionName") {
                     group = GROUP
-                    description = "Increments the project's versionName by 1"
+                    description = "Increments the project's versionName by given `increment`"
                     version.value(it).disallowChanges()
                 }
             }
