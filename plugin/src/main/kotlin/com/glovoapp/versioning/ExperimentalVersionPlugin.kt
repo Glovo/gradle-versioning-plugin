@@ -7,6 +7,7 @@ import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.publish.maven.tasks.PublishToMavenLocal
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.internal.logging.text.StyledTextOutput
 import org.gradle.internal.logging.text.StyledTextOutputFactory
@@ -30,6 +31,11 @@ internal class ExperimentalVersionPlugin : Plugin<Project> {
 
     override fun apply(target: Project): Unit = with(target) {
         val semanticVersion = the<SemanticVersioningExtension>().version
+
+        // ensures a new UUID after each build
+        if (gradle.parent == null) {
+            gradle.buildFinished { uuids.remove(gradle) }
+        }
 
         // updates the current version into an experimental one, it should be the first task to run
         val versionTask = tasks.register<EnsureExperimentalVersionTask>("experimentalVersion") {
@@ -65,6 +71,7 @@ internal class ExperimentalVersionPlugin : Plugin<Project> {
         }
 
         // collects all publications done to MavenLocal in a file (to support included builds)
+        val publishToMavenLocalTasks = hashSetOf<TaskProvider<*>>()
         val collectPublications = tasks.register("collectMavenLocalPublications") {
             val file = file("$buildDir/$REPORT_DIR/${buildId}/${project.name}.txt")
 
@@ -72,11 +79,12 @@ internal class ExperimentalVersionPlugin : Plugin<Project> {
             outputs.upToDateWhen { false }
             doLast {
                 file.writeText(
-                    allDependencies
-                        .distinct()
+                    publishToMavenLocalTasks.asSequence()
+                        .flatMap { it.get().allDependencies }
+                        .filter { it.project.rootProject == rootProject }
                         .mapNotNull { (it as? PublishToMavenLocal)?.publication }
-                        .map { "${it.groupId}:${it.artifactId}:${it.version}" }
-                        .joinToString(separator = "\n"))
+                        .distinct()
+                        .joinToString(separator = "\n") { "${it.groupId}:${it.artifactId}:${it.version}" })
             }
         }
 
@@ -139,7 +147,9 @@ internal class ExperimentalVersionPlugin : Plugin<Project> {
                     dependsOn(versionTask)
                     finalizedBy(reportPublications)
                 }
-                collectPublications.configure { dependsOn(mavenLocal) }
+
+                publishToMavenLocalTasks.add(mavenLocal)
+                collectPublications.configure { mustRunAfter(mavenLocal) }
             }
         }
     }
