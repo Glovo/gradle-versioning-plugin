@@ -67,9 +67,9 @@ fun MavenPublication.setupMandatoryPOMAttributes() {
 
         developers {
             developer {
-                id.set("gmazzo")
-                name.set("Guillermo Mazzola")
-                email.set("guillermo.mazzola@glovoapp.com")
+                id.set("glovo")
+                name.set("Glovo Tech")
+                email.set("tech.platform@glovoapp.com")
             }
         }
 
