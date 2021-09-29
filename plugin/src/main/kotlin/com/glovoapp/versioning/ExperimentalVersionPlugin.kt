@@ -49,6 +49,17 @@ internal class ExperimentalVersionPlugin : Plugin<Project> {
 
             onlyIf { semanticVersion.get().value.preRelease == null }
 
+            // makes equivalent task of parent builds to depend on this one
+            gradle.parent?.let { parent ->
+                parent.allprojects {
+                    plugins.withType<ExperimentalVersionPlugin> {
+                        tasks.named(TASK_NAME).configure {
+                            dependsOn(parent.includedBuilds.first { it.projectDir == target.rootDir }.task(this@register.path))
+                        }
+                    }
+                }
+            }
+
             doLast {
                 with(styledOutput) {
                     val description = withStyle(StyledTextOutput.Style.Description)

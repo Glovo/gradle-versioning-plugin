@@ -3,10 +3,10 @@ package com.glovoapp.versioning
 import java.util.*
 
 fun PersistedProperties.semanticVersion(key: String) =
-        PersistedVersion(this, key = key, parser = SemanticVersion.Companion::parse)
+    cachedVersion(key, SemanticVersion.Companion::parse)
 
 fun PersistedProperties.numericVersion(key: String) =
-        PersistedVersion(this, key = key, parser = String::toInt)
+    cachedVersion(key, String::toInt)
 
 class PersistedVersion<Type : Any>(
     private val properties: PersistedProperties,
@@ -15,7 +15,7 @@ class PersistedVersion<Type : Any>(
     private val toRaw: Type.() -> String = { toString() }
 ) {
 
-    private val onChangeListeners : MutableList<(Type) -> Unit> = LinkedList()
+    private val onChangeListeners: MutableList<(Type) -> Unit> = LinkedList()
 
     var value: Type
         get() = checkNotNull(properties.getProperty(key)) { "Missing property: $key in ${properties.file}" }.let(parser)

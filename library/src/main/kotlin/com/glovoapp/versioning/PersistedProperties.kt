@@ -2,6 +2,7 @@ package com.glovoapp.versioning
 
 import java.io.File
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * A [Properties] that dumps its content to the given [file] on each change.
@@ -13,6 +14,8 @@ class PersistedProperties(
 ) : Properties() {
 
     private var initialized = false
+
+    private val cache = ConcurrentHashMap<String, PersistedVersion<*>>()
 
     init {
         file.takeIf(File::isFile)?.reader()?.use(::load)
@@ -36,5 +39,13 @@ class PersistedProperties(
             file.writer().use { store(it, null) }
         }
     }
+
+    @Suppress("UNCHECKED_CAST")
+    internal inline fun <reified Type : Any> cachedVersion(key: String, noinline parser: (String) -> Type) = cache
+        .compute(key) { _, current ->
+            current
+                ?.takeUnless { it.value !is Type }
+                ?: PersistedVersion(this, key = key, parser = parser)
+        } as PersistedVersion<Type>
 
 }
