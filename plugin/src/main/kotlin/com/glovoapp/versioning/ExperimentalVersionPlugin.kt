@@ -12,6 +12,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.internal.logging.text.StyledTextOutput
 import org.gradle.internal.logging.text.StyledTextOutputFactory
+import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.the
 import org.gradle.kotlin.dsl.withType
@@ -27,19 +28,21 @@ internal class ExperimentalVersionPlugin : Plugin<Project> {
 
     companion object {
         private const val REPORT_DIR = "m2publications"
-        private val uuids = WeakHashMap<Gradle, UUID>()
+        private const val TASK_NAME = "experimentalVersion"
     }
 
     override fun apply(target: Project): Unit = with(target) {
         val semanticVersion = the<SemanticVersioningExtension>().version
+        val buildIdPlugin =
+            generateSequence(project.gradle, Gradle::getParent).last().plugins.apply(BuildIdPlugin::class)
 
         // ensures a new UUID after each build
         if (gradle.parent == null) {
-            gradle.buildFinished { uuids.remove(gradle) }
+            gradle.buildFinished { buildIdPlugin.buildId = null }
         }
 
         // updates the current version into an experimental one, it should be the first task to run
-        val versionTask = tasks.register<EnsureExperimentalVersionTask>("experimentalVersion") {
+        val versionTask = tasks.register<EnsureExperimentalVersionTask>(TASK_NAME) {
             group = SemanticVersioningPlugin.GROUP
             description = "Modifies the project version by adding a 'dev-experimental' pre-release tag"
             version.value(semanticVersion).disallowChanges()
@@ -64,13 +67,7 @@ internal class ExperimentalVersionPlugin : Plugin<Project> {
             }
         }
 
-        val buildId by lazy {
-            // TODO research if there is a Gradle API for "build id"
-            generateSequence(gradle, Gradle::getParent)
-                .last()
-                .let { uuids.getOrPut(it) { UUID.randomUUID() } }
-        }
-
+        val buildId by lazy { buildIdPlugin.buildId }
         val buildIdDir by lazy { file("$buildDir/$REPORT_DIR/${buildId}").apply { deleteOnExit() } }
 
         // collects all publications done to MavenLocal in a file (to support included builds)
@@ -176,5 +173,22 @@ internal class ExperimentalVersionPlugin : Plugin<Project> {
 
     private val Task.styledOutput
         get() = project.serviceOf<StyledTextOutputFactory>().create(this::class.java)
+
+    // TODO research if there is a Gradle API for "build id"
+    internal class BuildIdPlugin : Plugin<Gradle> {
+
+        @get:Synchronized
+        var buildId: UUID? = null
+            get() {
+                if (field == null) {
+                    field = UUID.randomUUID()
+                }
+                return field
+            }
+
+        override fun apply(target: Gradle) {
+        }
+
+    }
 
 }
