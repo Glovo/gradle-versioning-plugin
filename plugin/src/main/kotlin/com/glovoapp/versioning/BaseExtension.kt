@@ -3,6 +3,7 @@ package com.glovoapp.versioning
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.apply
 import java.io.File
@@ -17,7 +18,11 @@ abstract class BaseExtension @Inject constructor(
      * A cache for [PersistedProperties] "per build", which is not the same as having a static JVM field because it
      * will be cross-builds.
      */
-    private val cache = project.rootProject.plugins.apply(PersistedPropertiesCachePlugin::class).cache
+    private val cache = generateSequence(project.gradle, Gradle::getParent)
+        .last()
+        .plugins
+        .apply(PersistedPropertiesCachePlugin::class)
+        .cache
 
     val propertiesFile: RegularFileProperty = project.objects.fileProperty()
         .apply { finalizeValueOnRead() }
@@ -28,11 +33,11 @@ abstract class BaseExtension @Inject constructor(
         .map { cache.computeIfAbsent(it, ::PersistedProperties) }
         .forUseAtConfigurationTime()
 
-    internal class PersistedPropertiesCachePlugin : Plugin<Project> {
+    internal class PersistedPropertiesCachePlugin : Plugin<Gradle> {
 
         val cache = ConcurrentHashMap<File, PersistedProperties>()
 
-        override fun apply(target: Project) {
+        override fun apply(target: Gradle) {
         }
 
     }
