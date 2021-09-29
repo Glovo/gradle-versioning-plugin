@@ -70,10 +70,12 @@ internal class ExperimentalVersionPlugin : Plugin<Project> {
                 .let { uuids.getOrPut(it) { UUID.randomUUID() } }
         }
 
+        val buildIdDir by lazy { file("$buildDir/$REPORT_DIR/${buildId}").apply { deleteOnExit() } }
+
         // collects all publications done to MavenLocal in a file (to support included builds)
         val publishToMavenLocalTasks = hashSetOf<TaskProvider<*>>()
         val collectPublications = tasks.register("collectMavenLocalPublications") {
-            val file = file("$buildDir/$REPORT_DIR/${buildId}/${project.name}.txt")
+            val file = file("$buildIdDir/${project.name}.txt").apply { deleteOnExit() }
 
             outputs.file(file)
             outputs.upToDateWhen { false }
