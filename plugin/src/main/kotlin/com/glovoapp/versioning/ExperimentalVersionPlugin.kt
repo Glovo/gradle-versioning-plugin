@@ -4,6 +4,7 @@ import com.glovoapp.versioning.tasks.EnsureExperimentalVersionTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.internal.tasks.TaskExecutionOutcome
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.publish.maven.tasks.PublishToMavenLocal
@@ -84,9 +85,11 @@ internal class ExperimentalVersionPlugin : Plugin<Project> {
                     publishToMavenLocalTasks.asSequence()
                         .flatMap { it.get().allDependencies }
                         .filter { it.project.rootProject == rootProject }
-                        .mapNotNull { (it as? PublishToMavenLocal)?.publication }
+                        .mapNotNull { it as? PublishToMavenLocal }
                         .distinct()
-                        .joinToString(separator = "\n") { "${it.groupId}:${it.artifactId}:${it.version}" })
+                        .joinToString(separator = "\n") {
+                            "${it.publication.groupId}:${it.publication.artifactId}:${it.publication.version}:${it.state.outcome ?: "MISSING"}"
+                        })
             }
         }
 
@@ -104,18 +107,23 @@ internal class ExperimentalVersionPlugin : Plugin<Project> {
                     val description = withStyle(StyledTextOutput.Style.Description)
                     val identifier = withStyle(StyledTextOutput.Style.Identifier)
                     val info = withStyle(StyledTextOutput.Style.Info)
+                    val failure = withStyle(StyledTextOutput.Style.Failure)
 
                     text("The following artifacts are available at ")
                     description.text("~/.m2/")
                     println(":")
 
                     fun File.printPublications() = readLines().sorted().forEach {
-                        val (group, artifact, version) = it.split(":")
+                        val (group, artifact, version, outcome) = it.split(":")
 
                         text(" - ")
                         identifier.text(group)
                         text(":$artifact:")
-                        info.println(version)
+                        info.text(version)
+                        if (outcome != TaskExecutionOutcome.EXECUTED.name) {
+                            failure.text(" ($outcome)")
+                        }
+                        println()
                     }
 
                     val builds = reports.sorted()
