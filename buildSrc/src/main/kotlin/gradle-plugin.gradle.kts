@@ -17,7 +17,16 @@ val generateDSL = tasks.register("generatePluginsDSL") {
         outputDir.get().file("VersioningPluginDSL.kt").asFile.writeText(
             gradlePlugin.plugins
                 .filter { it.displayName != null }
-                .joinToString(separator = "\n\n", prefix = "@file:JvmMultifileClass\n\n") {
+                .joinToString(
+                    separator = "\n\n",
+                    prefix = """
+                        |@file:JvmMultifileClass
+                        |
+                        |const val semanticVersioningPluginVersion = "${project.version}"
+                        |
+                        |
+                    """.trimMargin()
+                ) {
                     """
                         val org.gradle.plugin.use.PluginDependenciesSpec.`${it.displayName}`
                             get() = id("${it.id}")
