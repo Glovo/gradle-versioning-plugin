@@ -4,6 +4,7 @@ plugins {
     `gradle-plugin`
     `code-coverage`
     id("pl.droidsonroids.jacoco.testkit")
+    id("com.github.gmazzo.buildconfig") version "3.0.3"
 }
 
 description = "Semantic Versioning Gradle Plugin"
@@ -13,6 +14,12 @@ dependencies {
     api(project(":library"))
     testFixturesApi(gradleTestKit())
     junit5("testFixturesApi")
+}
+
+buildConfig {
+    useKotlinOutput { internalVisibility = true }
+
+    buildConfigField("String", "PLUGIN_VERSION", provider { "\"${project.version}\"" })
 }
 
 gradlePlugin {
