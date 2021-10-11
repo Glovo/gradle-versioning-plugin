@@ -1,3 +1,5 @@
+import java.util.*
+
 plugins {
     id("kotlin-library")
     `java-gradle-plugin`
@@ -5,43 +7,17 @@ plugins {
     id("plugins-portal-publish")
 }
 
-val outputDir = layout.buildDirectory.dir("generated/plugins/dsl")
-
-// generates plugins DSL from the plugins descriptions, similar to `kotlin-dsl`
-val generateDSL = tasks.register("generatePluginsDSL") {
-    outputs.dir(outputDir)
-
-    onlyIf { gradlePlugin.plugins.isNotEmpty() }
-    doLast {
-        outputDir.get().asFile.apply { deleteRecursively(); mkdirs() }
-        outputDir.get().file("VersioningPluginDSL.kt").asFile.writeText(
-            gradlePlugin.plugins
-                .filter { it.displayName != null }
-                .joinToString(
-                    separator = "\n\n",
-                    prefix = """
-                        |@file:JvmMultifileClass
-                        |
-                        |const val semanticVersioningPluginVersion = "${project.version}"
-                        |
-                        |
-                    """.trimMargin()
-                ) {
-                    """
-                        val org.gradle.plugin.use.PluginDependenciesSpec.`${it.displayName}`
-                            get() = id("${it.id}")
-                    """.trimIndent()
-                }
-        )
-    }
-
-    kotlin.sourceSets["main"].kotlin.srcDir(files(outputDir).builtBy(this@register))
-}
-
+// a POM description is required by Maven Central
 gradlePlugin.plugins.all {
     this@all.description = project.description
+}
 
-    generateDSL.configure {
-        inputs.property("plugin:$id", implementationClass)
+tasks.pluginDescriptors.configure {
+    doLast {
+        declarations.get().forEach {
+            outputDirectory.file("${it.name}.properties").get().asFile.writer().use { out ->
+                Properties().apply { put("implementation-class", it.implementationClass) }.store(out, null)
+            }
+        }
     }
 }
