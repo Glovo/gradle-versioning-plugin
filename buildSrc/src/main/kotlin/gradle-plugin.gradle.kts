@@ -15,9 +15,8 @@ gradlePlugin.plugins.all {
 tasks.pluginDescriptors.configure {
     doLast {
         declarations.get().forEach {
-            outputDirectory.file("${it.name}.properties").get().asFile.writer().use { out ->
-                Properties().apply { put("implementation-class", it.implementationClass) }.store(out, null)
-            }
+            outputDirectory.file("${it.name}.properties").get().asFile
+                .writeText("implementation-class=${it.implementationClass}\n")
         }
     }
 }
