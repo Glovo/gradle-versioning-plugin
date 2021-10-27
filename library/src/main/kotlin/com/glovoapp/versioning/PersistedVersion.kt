@@ -17,10 +17,24 @@ class PersistedVersion<Type : Any>(
 
     private val onChangeListeners: MutableList<(Type) -> Unit> = LinkedList()
 
-    var value: Type
-        get() = checkNotNull(properties.getProperty(key)) { "Missing property: $key in ${properties.file}" }.let(parser)
-        set(value) {
-            properties.setProperty(key, value.toRaw())
+    private var rawValue: String? = null
+
+    var value: Type = @Suppress("UNCHECKED_CAST") (Any() as Type)
+        @Synchronized get() {
+            val actualValue = checkNotNull(properties.getProperty(key)) {
+                "Missing property: $key in ${properties.file}"
+            }
+
+            if (rawValue != actualValue) {
+                value = parser(actualValue)
+            }
+            return field
+        }
+        @Synchronized set(value) {
+            field = value
+            rawValue = value.toRaw()
+            properties.setProperty(key, rawValue)
+            onChangeListeners.forEach { it(value) }
         }
 
     fun onChanged(action: (Type) -> Unit) {

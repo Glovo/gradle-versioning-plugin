@@ -7,37 +7,62 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * A [Properties] that dumps its content to the given [file] on each change.
  *
+ * Only the very basic [MutableMap] methods are dirty safe (linked with the backed file)
+ *
  * @constructor creates a new [PersistedProperties]. No exception will be thrown if [file] does not exists.
  */
 class PersistedProperties(
     val file: File
 ) : Properties() {
 
-    private var initialized = false
-
     private val cache = ConcurrentHashMap<String, PersistedVersion<*>>()
+    private var loading = false
+    private var lastSync = 0L
 
     init {
-        file.takeIf(File::isFile)?.reader()?.use(::load)
-        initialized = true
+        reload()
     }
 
+    override fun get(key: Any?) = reloadIfDirty().let { super.get(key) }
+
+    override fun getProperty(key: String): String? = reloadIfDirty().let { super.getProperty(key) }
+
     override fun put(key: Any?, value: Any?) =
-            super.put(key, value).also { flush() }
+        super.put(key, value).also { flush() }
 
     override fun putAll(from: Map<*, *>) =
-            super.putAll(from).also { flush() }
+        super.putAll(from).also { flush() }
 
     override fun remove(key: Any?) =
-            super.remove(key).also { flush() }
+        super.remove(key).also { flush() }
 
     override fun clear() =
-            super.clear().also { flush() }
+        super.clear().also { flush() }
 
-    fun flush()  {
-        if (initialized) {
-            file.writer().use { store(it, null) }
+    private fun reloadIfDirty() {
+        if (isDirty) {
+            reload()
         }
+    }
+
+    val isDirty get() = file.lastModified() != lastSync
+
+    fun flush() {
+        if (!loading) {
+            file.writer().use { store(it, null) }
+            lastSync = file.lastModified()
+        }
+    }
+
+    fun reload() {
+        loading = true
+        try {
+            file.takeIf(File::isFile)?.reader()?.use(::load)
+
+        } finally {
+            loading = false
+        }
+        lastSync = file.lastModified()
     }
 
     @Suppress("UNCHECKED_CAST")
