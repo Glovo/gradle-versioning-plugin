@@ -27,17 +27,21 @@ class PersistedProperties(
 
     override fun getProperty(key: String): String? = reloadIfDirty().let { super.getProperty(key) }
 
-    override fun put(key: Any?, value: Any?) =
-        super.put(key, value).also { flush() }
+    override fun put(key: Any?, value: Any?) = super.put(key, value)
+        .also { if (it != value) { flush() } }
 
-    override fun putAll(from: Map<*, *>) =
-        super.putAll(from).also { flush() }
+    override fun putAll(from: Map<*, *>) {
+        val changed = from.entries.fold(false) { acc, (key, value) ->
+            acc or (super.put(key, value) != value)
+        }
 
-    override fun remove(key: Any?) =
-        super.remove(key).also { flush() }
+        if (changed) { flush() }
+    }
 
-    override fun clear() =
-        super.clear().also { flush() }
+    override fun remove(key: Any?) = super.remove(key)
+        .also { if (it != null) { flush() } }
+
+    override fun clear() = super.clear().also { flush() }
 
     private fun reloadIfDirty() {
         if (isDirty) {
