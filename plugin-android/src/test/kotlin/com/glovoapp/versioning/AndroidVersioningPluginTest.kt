@@ -1,17 +1,43 @@
 package com.glovoapp.versioning
 
 import org.gradle.testkit.runner.TaskOutcome
+import org.gradle.testkit.runner.internal.PluginUnderTestMetadataReading
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import java.io.File
 
-class AndroidVersioningPluginTest {
+abstract class AndroidVersioningPluginTest(
+    gradleVersion: String,
+    agpVersion: String,
+) {
+
+    class Gradle72_AGP701 : AndroidVersioningPluginTest(SemanticVersioningPlugin.minimumGradleVersion.toString(),"7.0.1")
+    class Gradle742_AGP721 : AndroidVersioningPluginTest("7.4.2","7.2.1")
 
     @JvmField
     @RegisterExtension
     val gradle = GradleBuildExtension {
+        runner.withGradleVersion(gradleVersion)
+
+        val pluginClassPath = PluginUnderTestMetadataReading.readImplementationClasspath()
+            .joinToString(separator = ", ") { "\"${it}\"" }
+
+        File(root, "buildSrc/build.gradle.kts").apply { parentFile.mkdirs() }.writeText("""
+            plugins {
+                `kotlin-dsl`
+            }
+            repositories {
+                mavenCentral()
+                google()
+            }
+            dependencies {
+                implementation("com.android.tools.build:gradle:$agpVersion")
+                implementation(files($pluginClassPath))
+            }
+        """.trimIndent())
+
         buildFile {
             """
             plugins {

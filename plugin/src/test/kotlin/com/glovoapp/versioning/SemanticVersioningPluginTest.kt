@@ -15,6 +15,8 @@ class SemanticVersioningPluginTest {
     @JvmField
     @RegisterExtension
     val gradle = GradleBuildExtension {
+        runner.withGradleVersion(SemanticVersioningPlugin.minimumGradleVersion.toString())
+
         buildFile {
             """
             plugins {

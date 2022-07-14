@@ -10,11 +10,7 @@ import com.glovoapp.versioning.tasks.IncrementSemanticVersionTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.plugins.DslObject
-import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.getByName
-import org.gradle.kotlin.dsl.register
-import org.gradle.kotlin.dsl.withType
+import org.gradle.kotlin.dsl.*
 import kotlin.reflect.KMutableProperty
 
 class AndroidVersioningPlugin : Plugin<Project> {
