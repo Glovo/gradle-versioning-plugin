@@ -10,7 +10,7 @@ base.archivesName.set("gradle-android-versioning-plugin")
 
 dependencies {
     api(project(":plugin"))
-    implementation("com.android.tools.build:gradle:7.1.2")
+    compileOnly("com.android.tools.build:gradle:7.1.2")
     testImplementation(testFixtures(project(":plugin")))
 }
 
