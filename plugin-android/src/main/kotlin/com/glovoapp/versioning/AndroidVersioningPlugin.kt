@@ -83,21 +83,22 @@ class AndroidVersioningPlugin : Plugin<Project> {
                         }
                     }
 
-                    // ensures these task are run (if present in the graph) before any Android build task
+                    // ensures these tasks are run (if present in the graph) before any Android build task
                     tasks.named("preBuild") {
-                        doFirst {
-                            checkNotNull(androidVersion.code ?: androidVersion.name) {
-                                "Please provide at least one of '${extension.versionCodeProperty.get()}' or " +
-                                        "'${extension.versionCodeProperty.get()}' properties on " +
-                                        "`${extension.propertiesFile.get()}`"
-                            }
-                        }
                         shouldRunAfter(
                             *listOfNotNull(
                                 incrementVersionCodeTask,
                                 incrementVersionNameTask
                             ).toTypedArray()
                         )
+                    }
+
+                    gradle.projectsEvaluated {
+                        checkNotNull(androidVersion.code ?: androidVersion.name) {
+                            "Please provide at least one of '${extension.versionCodeProperty.get()}' or " +
+                                    "'${extension.versionCodeProperty.get()}' properties on " +
+                                    "`${extension.propertiesFile.get()}`"
+                        }
                     }
                 }
         }
