@@ -51,7 +51,7 @@ Will result on
 version=1.2.4
 ```
 
-You may specify also which version to increase: `--major`, `--minor` or `--path`
+You may specify also which version to increase: `--major`, `--minor` or `--patch`
 
 ```shell
 ./gradlew incrementSemanticVersion --major
@@ -79,7 +79,7 @@ Once applied, version can access from the `android.versioning.version` property:
 task("printVersion") {
     doLast {
         val androidVersion = project.android.versioning.version.get()
-        pritnln("The project current versionCode is ${androidVersion.code} and name is ${androidVersion.name}")
+        println("The project current versionCode is ${androidVersion.code} and name is ${androidVersion.name}")
     }
 }
 ```
