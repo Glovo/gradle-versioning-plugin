@@ -8,6 +8,13 @@ on:
       - master
 
 jobs:
+  lint:
+    name: Linting
+    uses: Glovo/remote-gh-actions/.github/workflows/ci-lint.yaml@v3 
+    with:
+      WORKFLOW_VERSION: v3
+      MANIFEST_FILE_NAME: image_attributes.yaml           
+    secrets: inherit
   Build:
     runs-on: ubuntu-20.04
     steps:
