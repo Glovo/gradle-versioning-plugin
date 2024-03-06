@@ -1,3 +1,6 @@
+> [!CAUTION]
+> This project is officially unmaintained and known incompatible with `Gradle 9` and its `Configuration Cache`.
+
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](./LICENSE)
 [![Maven Central](https://img.shields.io/maven-central/v/com.glovoapp.gradle/versioning)](https://search.maven.org/artifact/com.glovoapp.gradle/versioning)
 [![Gradle Plugin Portal](https://img.shields.io/gradle-plugin-portal/v/com.glovoapp.semantic-versioning)](https://plugins.gradle.org/plugin/com.glovoapp.semantic-versioning)
